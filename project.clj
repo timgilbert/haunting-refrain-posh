@@ -9,7 +9,10 @@
                  [posh "0.5.4"]
                  [datascript "0.15.4"]
                  [hodgepodge "0.1.3"]
-                 [shodan "0.4.2"]]
+                 [shodan "0.4.2"]
+                 [functionalbytes/sibiro "0.1.4"]
+                 [kibu/pushy "0.3.6"]
+                 [mount "0.1.10"]]
 
   :plugins [[lein-cljsbuild "1.1.4"]]
 

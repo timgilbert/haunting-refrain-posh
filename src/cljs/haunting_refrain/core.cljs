@@ -1,11 +1,11 @@
 (ns haunting-refrain.core
     (:require [reagent.core :as reagent]
               [re-frame.core :as re-frame]
-              [haunting-refrain.events]
-              [haunting-refrain.subs]
-              [haunting-refrain.views :as views]
-              [haunting-refrain.config :as config]))
-
+              [haunting-refrain.fx.core]
+              [haunting-refrain.views.shell :as shell]
+              [haunting-refrain.config :as config]
+              [mount.core :as mount]
+              haunting-refrain.route.router))
 
 (defn dev-setup []
   (when config/debug?
@@ -13,10 +13,11 @@
     (println "dev mode")))
 
 (defn mount-root []
-  (reagent/render [views/main-panel]
+  (reagent/render [shell/shell]
                   (.getElementById js/document "app")))
 
 (defn ^:export init []
   (re-frame/dispatch-sync [:initialize-db])
+  (mount/start)
   (dev-setup)
   (mount-root))
