@@ -1,5 +1,6 @@
 (ns haunting-refrain.fx.core
-  (:require [re-frame.core :as re-frame]))
+  (:require haunting-refrain.fx.navigation
+            [re-frame.core :as re-frame]))
 
 (def default-db
   {:route/current-page :main/index})

@@ -17,7 +17,10 @@
     :route/page index/about-page}
    :foursquare/login
    {:route/url  "/foursquare"
-    :route/page foursquare/login-page}})
+    :route/page foursquare/login-page}
+   :main/route-not-found
+   {:route/uri  "/*"
+    :route/page misc/route-not-found}})
 
 (defn page-for
   "Given a route keyword from the above map, return its :route/page value"
@@ -40,7 +43,3 @@
   (-> route-definitions to-sibiro-table sibiro/compile-routes))
 
 (defstate all-routes :start (compile-all-routes))
-
-(defn href
-  [route-keyword & [params]]
-  (sibiro/path-for @all-routes route-keyword params))

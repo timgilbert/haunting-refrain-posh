@@ -26,10 +26,13 @@
 
 (defstate pushy-instance :start (start-pushy!) :stop #(pushy/stop! @pushy-instance))
 
+(defn href
+  [route-keyword & [params]]
+  (sibiro/path-for @table/all-routes route-keyword params))
+
 ;; re-frame handlers
 (defn- route-changed-handler
   [db [_ route-name route-params]]
-  (console/log route-name route-params)
   (assoc db :route/current-page route-name
             :route/params       route-params))
 
