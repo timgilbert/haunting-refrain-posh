@@ -2,4 +2,5 @@
 
 
 (defn login-page []
-  [:p "Foursqare login!"])
+  [:div.container
+   [:p "Foursqare login!"]])

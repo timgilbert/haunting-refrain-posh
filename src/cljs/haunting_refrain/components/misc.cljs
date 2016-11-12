@@ -3,10 +3,13 @@
             [re-com.core :as re-com]
             [re-frame.core :as re-frame]))
 
-(defn a-link [contents route-name]
-  [:a {:href (router/href route-name)} contents])
+(defn link
+  ([route-name content]
+   (link nil route-name content))
+  ([attr route-name content]
+   [:a (merge {:href (router/href route-name)} attr) content]))
 
-(defn link [route-name label]
+(defn rc-link [route-name label]
   [re-com/hyperlink
    :label label
    :on-click #(re-frame/dispatch [:navigate route-name])])

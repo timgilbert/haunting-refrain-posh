@@ -1,7 +1,9 @@
 (ns haunting-refrain.views.index)
 
 (defn index-page []
-  [:p "Index"])
+  [:div.container
+   [:p "Index"]])
 
 (defn about-page []
-  [:p "About"])
+  [:div.container
+   [:p "About"]])

@@ -16,7 +16,6 @@
 (defn- dispatch
   "Once the route has been matched, take an action on the dispatched route"
   [{:keys [route-handler route-params alternatives]}]
-  (console/log route-handler route-params)
   (re-frame/dispatch [:route/changed route-handler route-params]))
 
 (defn- start-pushy! []

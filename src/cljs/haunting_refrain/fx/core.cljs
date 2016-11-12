@@ -1,5 +1,7 @@
 (ns haunting-refrain.fx.core
-  (:require haunting-refrain.fx.navigation
+  (:require haunting-refrain.fx.foursquare
+            haunting-refrain.fx.navigation
+            haunting-refrain.fx.spotify
             [re-frame.core :as re-frame]))
 
 (def default-db

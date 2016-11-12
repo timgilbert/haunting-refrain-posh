@@ -23,11 +23,13 @@
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"
                                     "test/js"]
 
-  :figwheel {:css-dirs ["resources/public/css"]}
+  :figwheel {:css-dirs ["resources/public/css"]
+             :ring-handler haunting-refrain.core/handler}
 
   :profiles
   {:dev
-   {:dependencies [[binaryage/devtools "0.8.3"]]
+   {:dependencies [[binaryage/devtools "0.8.3"]
+                   [ring "1.5.0"]]
 
     :plugins      [[lein-figwheel "0.5.8" :exclusions [org.clojure/clojure]]
                    [lein-doo "0.1.7"]
