@@ -1,10 +1,15 @@
 (defproject haunting-refrain "0.1.0-SNAPSHOT"
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.229"]
+  :pedantic? :warn
+  :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
+                 [org.clojure/clojurescript "1.9.293"]
                  [reagent "0.6.0"]
                  [re-frame "0.8.0"]
-                 [org.clojure/core.async "0.2.391"]
-                 [re-com "0.8.3"]]
+                 [org.clojure/core.async "0.2.395"]
+                 [re-com "1.0.0"]
+                 [posh "0.5.4"]
+                 [datascript "0.15.4"]
+                 [hodgepodge "0.1.3"]
+                 [shodan "0.4.2"]]
 
   :plugins [[lein-cljsbuild "1.1.4"]]
 
@@ -19,10 +24,11 @@
 
   :profiles
   {:dev
-   {:dependencies [[binaryage/devtools "0.8.2"]]
+   {:dependencies [[binaryage/devtools "0.8.3"]]
 
-    :plugins      [[lein-figwheel "0.5.7"]
-                   [lein-doo "0.1.7"]]
+    :plugins      [[lein-figwheel "0.5.8" :exclusions [org.clojure/clojure]]
+                   [lein-doo "0.1.7"]
+                   [lein-ancient "0.6.10"]]
     }}
 
   :cljsbuild
