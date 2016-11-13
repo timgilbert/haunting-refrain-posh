@@ -19,7 +19,7 @@
    {:route/url  "/foursquare"
     :route/page foursquare/login-page}
    :main/route-not-found
-   {:route/uri  "/*"
+   {:route/url  "/:*"
     :route/page misc/route-not-found}})
 
 (defn page-for
@@ -36,7 +36,7 @@
   #{[:get url handler] [:get url handler] ...}"
   [definitions]
   (into #{}
-        (for [[route-key {:keys [:route/url]}] route-definitions]
+        (for [[route-key {:keys [:route/url]}] definitions]
           [:get url route-key])))
 
 (defn compile-all-routes []

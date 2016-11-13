@@ -1,6 +1,7 @@
 (ns haunting-refrain.fx.navigation
   (:require [re-frame.core :as re-frame]
             [pushy.core :as pushy]
+            [shodan.console :as console]
             [haunting-refrain.route.router :as router]))
 
 (defn hard-redirect! [history place]
@@ -9,6 +10,7 @@
 
 (defn navigate
   [[place & [type]]]
+  (console/log place type)
   (let [nav-fn (if (= type :redirect)
                  hard-redirect!
                  pushy/set-token!)]
@@ -18,5 +20,5 @@
 
 (re-frame/reg-event-fx
   :navigate
-  (fn [cofx [_ place & [params]]]
+  (fn [_ [_ place & [params]]]
     {:navigate [(router/href place params)]}))
