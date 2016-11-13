@@ -1,6 +1,7 @@
 (ns haunting-refrain.fx.auth
   (:require [re-frame.core :as re-frame]
-            [shodan.console :as console]))
+            [shodan.console :as console]
+            [cemerick.url :as url]))
 
 (def ^:private foursquare-client-id
   "BAL2VGI3TXOWFI1TGH4O4VIHBLQ4AUC404YYSRRT5OJJEGGL")
@@ -27,6 +28,17 @@
                      "&scopes=playlist-modify-public%2playlist-modify-private"
                      "&redirect_uri=" spotify-callback-url)}})
 
+(defn url-fragment-coeffect
+  "The coeffect will examine the current page's URL and treat the "
+  [coeffects _]
+  (let [frag-map (-> (.. js/window -location -href)
+                     (url/url)
+                     :anchor
+                     (url/query->map))]
+    (assoc coeffects :url-fragment frag-map)))
+
+(re-frame/reg-cofx :url-fragment url-fragment-coeffect)
+
 (re-frame/reg-sub
   :auth/logged-in?
   (fn [db [_ service]]
@@ -39,17 +51,21 @@
       {:navigate [url :redirect]}
       (console/error "Can't find an authorization url for" service))))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
   :auth/logout
-  (fn [db [_ service]]
-    (update-in db [:auth/access-token] dissoc service)))
+  (fn [{:keys [db]} [_ service]]
+    (let [new-db (update-in db [:auth/access-token] dissoc service)]
+      {:db      new-db
+       :persist [:hr-persistance (select-keys new-db [:auth/access-token])]})))
 
 (re-frame/reg-event-fx
   :auth/parse-token
   [(re-frame/inject-cofx :url-fragment)]
   (fn [cofx [_ service]]
     (let [token-name (get-in auth-services [service :auth/token])
-          token      (get-in cofx [:url-fragment token-name])]
+          token      (get-in cofx [:url-fragment token-name])
+          new-db     (assoc-in (:db cofx) [:auth/access-token service] token)]
       (console/log "t" token "tn" token-name)
-      {:db       (assoc-in (:db cofx) [:auth/access-token service] token)
+      {:db       new-db
+       :persist  [:hr-persistance (select-keys new-db [:auth/access-token])]
        :dispatch [:navigate/replace :main/index]})))
