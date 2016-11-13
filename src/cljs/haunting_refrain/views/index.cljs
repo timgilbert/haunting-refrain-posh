@@ -2,6 +2,16 @@
   (:require [re-frame.core :as re-frame]
             [haunting-refrain.components.misc :as misc]))
 
+(defn go-button []
+  (let [logged-in? (re-frame/subscribe [:auth/logged-in? :foursquare])]
+    (fn []
+      (if @logged-in?
+        [misc/big-button
+         {:dispatch [:foursquare/get-checkins]
+          :icon "fa-foursquare"}
+         "Get Checkins!"]
+        [:b "Log in to get checkins"]))))
+
 (defn index-page []
   [:div.container
    [:h1.title "Haunting Refrain"]
@@ -12,10 +22,7 @@
     [:p "To get started, log in to Foursquare and Spotify using the links in the top navigation."]
 
     ;; temp
-    [misc/big-button
-     {:dispatch [:foursquare/get-checkins]
-      :icon "fa-foursquare"}
-     "Get Checkins!"]]])
+    [go-button]]])
 
 (defn about-page []
   [:div.container

@@ -29,12 +29,14 @@
 (re-frame/reg-event-db
   :foursquare/get-checkins-failure
   (fn [db [_ body status]]
-    (console/warn "Oh noes! Checkin attempt returned " status ", body:" body)))
+    (console/warn "Oh noes! Checkin attempt returned " status ", body:" body)
+    db))
 
 (re-frame/reg-event-db
   :foursquare/get-checkins-success
   (fn [db [_ body]]
     (console/log "Woo hoo, success!")
-    (console/log body)))
+    (console/log body)
+    db))
 
 
