@@ -1,5 +1,7 @@
 (ns haunting-refrain.fx.core
   (:require haunting-refrain.fx.auth
+            haunting-refrain.fx.foursquare
+            haunting-refrain.fx.http
             haunting-refrain.fx.local-storage
             haunting-refrain.fx.navigation
             [re-frame.core :as re-frame]

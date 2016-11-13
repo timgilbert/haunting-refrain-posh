@@ -9,6 +9,7 @@
                  [posh "0.5.4"]
                  [datascript "0.15.4"]
                  [hodgepodge "0.1.3"]
+                 [cljs-http "0.1.42"]
                  [shodan "0.4.2"]
                  [functionalbytes/sibiro "0.1.4"]
                  [kibu/pushy "0.3.6"]
