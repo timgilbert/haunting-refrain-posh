@@ -39,3 +39,10 @@
 
 (re-frame/reg-sub :route/current-page (fn [db _] (:route/current-page db)))
 (re-frame/reg-sub :route/params       (fn [db _] (:route/params db)))
+
+(defn link
+  ([route-name content]
+   (link nil route-name content))
+  ([attr route-name content]
+   [:a (merge {:href (href route-name)} attr) content]))
+

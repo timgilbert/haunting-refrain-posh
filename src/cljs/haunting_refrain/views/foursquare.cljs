@@ -1,23 +1,19 @@
 (ns haunting-refrain.views.foursquare
   (:require [re-frame.core :as re-frame]
-            [clojure.string :as string])
-  (:import goog.Uri))
+            [haunting-refrain.components.misc :as misc]))
 
 (defn- login-button []
-  [:div.columns
-  [:div.column.is-half.is-offset-one-quarter
-  [:a.button.is-primary.is-medium {:on-click #(re-frame/dispatch [:foursquare/login])}
-   [:span.icon
-    [:i.fa.fa-foursquare]]
-   [:span "Log In to Foursquare"]]]])
+  [misc/big-button
+   {:dispatch [:auth/login :foursquare]
+    :icon "fa-foursquare"}
+   "Log In to Foursquare"])
 
 (defn- logout-button []
-  [:div.columns
-  [:div.column.is-half.is-offset-one-quarter
-  [:a.button.is-warning.is-medium {:on-click #(re-frame/dispatch [:foursquare/logout])}
-   [:span.icon
-    [:i.fa.fa-foursquare]]
-   [:span "Log Out of Foursquare"]]]])
+  [misc/big-button
+   {:dispatch [:auth/logout :foursquare]
+    :icon "fa-foursquare"
+    :class "is-warning"}
+   "Log Out of Foursquare"])
 
 (defn- logged-out-page []
   [:div.container.content
@@ -35,7 +31,7 @@
     [logout-button]]])
 
 (defn foursquare-page []
-  (let [logged-in (re-frame/subscribe [:foursquare/logged-in?])]
+  (let [logged-in (re-frame/subscribe [:auth/logged-in? :foursquare])]
     (fn []
       (if @logged-in
         [logged-in-page]
@@ -44,9 +40,6 @@
 (defn hello-page
   "This page is the entry point into hr when the user returns from foursquare authentication."
   []
-  (let [uri         (Uri. (.-location js/window))
-        [var token] (string/split (.getFragment uri) #"=")]
-    (re-frame/dispatch [:foursquare/token-retrieved token])
-    (fn []
-      [:div.container.content
-       "hello"])))
+  (re-frame/dispatch [:auth/parse-token :foursquare])
+  (fn []
+    [:div.container.content ""]))

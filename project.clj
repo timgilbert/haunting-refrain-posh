@@ -12,6 +12,8 @@
                  [shodan "0.4.2"]
                  [functionalbytes/sibiro "0.1.4"]
                  [kibu/pushy "0.3.6"]
+                 [com.cemerick/url "0.1.1"]
+                 [re-frisk "0.2.2"]
                  [mount "0.1.10"]]
 
   :plugins [[lein-cljsbuild "1.1.4"]]
