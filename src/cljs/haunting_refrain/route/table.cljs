@@ -3,6 +3,7 @@
             [sibiro.core :as sibiro]
             [shodan.console :as console]
             [haunting-refrain.views.foursquare :as foursquare]
+            [haunting-refrain.views.spotify :as spotify]
             [haunting-refrain.views.misc :as misc]
             [haunting-refrain.views.index :as index]))
 
@@ -21,6 +22,12 @@
    :foursquare/hello
    {:route/url  "/foursquare-hello"
     :route/page foursquare/hello-page}
+   :spotify/login
+   {:route/url  "/spotify"
+    :route/page spotify/spotify-page}
+   :spotify/hello
+   {:route/url  "/spotify-hello"
+    :route/page spotify/hello-page}
    :main/route-not-found
    {:route/url  "/:*"
     :route/page misc/route-not-found}})

@@ -33,8 +33,8 @@
 (defn- spotify-icon []
   (let [logged-in (re-frame/subscribe [:auth/logged-in? :spotify])]
     (fn []
-      [:a.nav-item
-       [:span.icon.nav-item
+      [link {:class "nav-item"} :spotify/login
+       [:span.icon
         [:i.fa.fa-spotify]]])))
 
 (defn- top-nav []
