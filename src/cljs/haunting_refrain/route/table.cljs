@@ -17,7 +17,10 @@
     :route/page index/about-page}
    :foursquare/login
    {:route/url  "/foursquare"
-    :route/page foursquare/login-page}
+    :route/page foursquare/foursquare-page}
+   :foursquare/hello
+   {:route/url  "/foursquare-hello"
+    :route/page foursquare/hello-page}
    :main/route-not-found
    {:route/url  "/:*"
     :route/page misc/route-not-found}})

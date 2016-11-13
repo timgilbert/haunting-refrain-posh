@@ -27,3 +27,14 @@
   (fn [_ _]
     (console/log "login " foursquare-redirect-url)
     {:navigate [foursquare-redirect-url :redirect]}))
+
+(re-frame/reg-event-db
+  :foursquare/logout
+  (fn [db _]
+    (dissoc db :foursquare/access-token)))
+
+(re-frame/reg-event-fx
+  :foursquare/token-retrieved
+  (fn [{:keys[db]} [_ token]]
+    {:db       (assoc db :foursquare/access-token token)
+     :dispatch [:navigate/push :main/index :replace]}))

@@ -9,13 +9,14 @@
    [:h3 (str "oops! page not found for " page)]])
 
 (defn- page-content []
-  (let [current-page (re-frame/subscribe [:route/current-page])]
+  (let [current-page (re-frame/subscribe [:route/current-page])
+        page-params  (re-frame/subscribe [:route/params])]
     (fn []
       (let [page (table/page-for @current-page)]
         [:section.section.main-content
          (if (nil? page)
-           [oops @current-page]
-           [page])]))))
+           [oops @current-page @page-params]
+           [page @page-params])]))))
 
 (defn shell []
   (fn []
@@ -23,5 +24,4 @@
      [nav/top-nav]
      [nav/left-nav]
      [page-content]
-     [nav/footer]
-      ]))
+     [nav/footer]]))
