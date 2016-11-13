@@ -1,9 +1,9 @@
 (ns haunting-refrain.views.index
-  (:require [re-frame.core :as re-frame]
+  (:require [re-frame.core :as rf]
             [haunting-refrain.components.misc :as misc]))
 
 (defn go-button []
-  (let [logged-in? (re-frame/subscribe [:auth/logged-in? :foursquare])]
+  (let [logged-in? (rf/subscribe [:auth/logged-in? :foursquare])]
     (fn []
       (if @logged-in?
         [misc/big-button

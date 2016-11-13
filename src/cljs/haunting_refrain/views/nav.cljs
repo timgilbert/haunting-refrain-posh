@@ -1,16 +1,16 @@
 (ns haunting-refrain.views.nav
-  (:require [re-frame.core :as re-frame]
+  (:require [re-frame.core :as rf]
             [haunting-refrain.route.router :refer [link]]))
 
 (defn- nav-link [route label]
-  (let [current-page (re-frame/subscribe [:route/current-page])]
+  (let [current-page (rf/subscribe [:route/current-page])]
     (fn [route label]
       (let [class (if (= @current-page route) "nav-item is-active" "nav-item")]
         [link {:class class} route label]))))
 
 (defn- service-icon
   [logged-in-sub]
-  (let [logged-in? (re-frame/subscribe [logged-in-sub])]
+  (let [logged-in? (rf/subscribe [logged-in-sub])]
     ))
 
 (defn logged-out-foursquare-icon []
@@ -24,14 +24,14 @@
     [:i.fa.fa-foursquare]]])
 
 (defn- foursquare-icon []
-  (let [logged-in (re-frame/subscribe [:auth/logged-in? :foursquare])]
+  (let [logged-in (rf/subscribe [:auth/logged-in? :foursquare])]
     (fn []
       (if @logged-in
         [logged-out-foursquare-icon]
         [logged-in-foursquare-icon]))))
 
 (defn- spotify-icon []
-  (let [logged-in (re-frame/subscribe [:auth/logged-in? :spotify])]
+  (let [logged-in (rf/subscribe [:auth/logged-in? :spotify])]
     (fn []
       [link {:class "nav-item"} :spotify/login
        [:span.icon

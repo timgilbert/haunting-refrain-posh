@@ -1,6 +1,6 @@
 (ns haunting-refrain.core
     (:require [reagent.core :as reagent]
-              [re-frame.core :as re-frame]
+              [re-frame.core :as rf]
               [haunting-refrain.fx.core]
               [haunting-refrain.views.shell :as shell]
               [haunting-refrain.config :as config]
@@ -19,7 +19,7 @@
                   (.getElementById js/document "app")))
 
 (defn ^:export init []
-  (re-frame/dispatch-sync [:initialize-db])
+  (rf/dispatch-sync [:initialize-db])
   (mount/start)
   (dev-setup)
   (mount-root))

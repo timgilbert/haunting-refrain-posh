@@ -1,6 +1,5 @@
 (ns haunting-refrain.fx.foursquare
-  (:require [hodgepodge.core :as hp]
-            [re-frame.core :as re-frame]
+  (:require [re-frame.core :refer [reg-event-fx reg-event-db]]
             [shodan.console :as console]))
 
 (def ^:private foursquare-api-version "20161111")
@@ -24,19 +23,17 @@
                  :on-success :foursquare/get-checkins-success
                  :on-failure :foursquare/get-checkins-failure}]}))
 
-(re-frame/reg-event-fx :foursquare/get-checkins get-checkins)
+(reg-event-fx :foursquare/get-checkins get-checkins)
 
-(re-frame/reg-event-db
+(reg-event-db
   :foursquare/get-checkins-failure
   (fn [db [_ body status]]
     (console/warn "Oh noes! Checkin attempt returned " status ", body:" body)
     db))
 
-(re-frame/reg-event-db
+(reg-event-db
   :foursquare/get-checkins-success
   (fn [db [_ body]]
     (console/log "Woo hoo, success!")
     (console/log body)
     db))
-
-

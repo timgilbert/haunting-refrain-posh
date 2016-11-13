@@ -1,5 +1,5 @@
 (ns haunting-refrain.views.spotify
-  (:require [re-frame.core :as re-frame]
+  (:require [re-frame.core :as rf]
             [haunting-refrain.components.misc :as misc]))
 
 (defn- login-button []
@@ -31,7 +31,7 @@
     [logout-button]]])
 
 (defn spotify-page []
-  (let [logged-in (re-frame/subscribe [:auth/logged-in? :spotify])]
+  (let [logged-in (rf/subscribe [:auth/logged-in? :spotify])]
     (fn []
       (if @logged-in
         [logged-in-page]
@@ -40,6 +40,6 @@
 (defn hello-page
   "This page is the entry point into hr when the user returns from spotify authentication."
   []
-  (re-frame/dispatch [:auth/parse-token :spotify])
+  (rf/dispatch [:auth/parse-token :spotify])
   (fn []
     [:div.container.content ""]))

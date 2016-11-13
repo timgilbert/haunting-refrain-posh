@@ -1,5 +1,5 @@
 (ns haunting-refrain.views.foursquare
-  (:require [re-frame.core :as re-frame]
+  (:require [re-frame.core :as rf]
             [haunting-refrain.components.misc :as misc]))
 
 (defn- login-button []
@@ -31,7 +31,7 @@
     [logout-button]]])
 
 (defn foursquare-page []
-  (let [logged-in (re-frame/subscribe [:auth/logged-in? :foursquare])]
+  (let [logged-in (rf/subscribe [:auth/logged-in? :foursquare])]
     (fn []
       (if @logged-in
         [logged-in-page]
@@ -40,6 +40,6 @@
 (defn hello-page
   "This page is the entry point into hr when the user returns from foursquare authentication."
   []
-  (re-frame/dispatch [:auth/parse-token :foursquare])
+  (rf/dispatch [:auth/parse-token :foursquare])
   (fn []
     [:div.container.content ""]))

@@ -1,10 +1,11 @@
 (ns haunting-refrain.fx.core
   (:require haunting-refrain.fx.auth
+            haunting-refrain.fx.datascript
             haunting-refrain.fx.foursquare
             haunting-refrain.fx.http
             haunting-refrain.fx.local-storage
             haunting-refrain.fx.navigation
-            [re-frame.core :as re-frame]
+            [re-frame.core :refer [reg-event-fx inject-cofx]]
             [cemerick.url :as url]))
 
 (def default-db
@@ -16,7 +17,7 @@
   [{:keys [local-storage]} [_]]
   {:db (merge default-db local-storage)})
 
-(re-frame/reg-event-fx
+(reg-event-fx
   :initialize-db
-  [(re-frame/inject-cofx :local-storage :hr-persistance)]
+  [(inject-cofx :local-storage :hr-persistance)]
   initialize)

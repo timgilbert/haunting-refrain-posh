@@ -1,5 +1,5 @@
 (ns haunting-refrain.fx.navigation
-  (:require [re-frame.core :as re-frame]
+  (:require [re-frame.core :refer [reg-fx reg-event-db reg-event-fx reg-sub]]
             [pushy.core :as pushy]
             [shodan.console :as console]
             [haunting-refrain.route.router :as router]))
@@ -17,16 +17,29 @@
                  pushy/set-token!)]
     (nav-fn @router/pushy-instance place)))
 
-(re-frame/reg-fx :navigate navigate)
+(reg-fx :navigate navigate)
 
-(re-frame/reg-event-fx
+(reg-event-fx
   :navigate/push
   (fn [_ [_ place & [params]]]
     (console/log "place" place "params" params)
     {:navigate [(router/href place params) :push]}))
 
-(re-frame/reg-event-fx
+(reg-event-fx
   :navigate/replace
   (fn [_ [_ place & [params]]]
     (console/log "place" place "params" params)
     {:navigate [(router/href place params) :replace]}))
+
+(defn- route-changed-handler
+  "Handler called by pushy when the URL changes. route-name is the keyword name of the route;
+  route-params are the (potentially nil) parameters associated with the route. See route.table
+  for the big list of routes."
+  [db [_ route-name route-params]]
+  (assoc db :route/current-page route-name
+            :route/params       route-params))
+
+(reg-event-db :route/changed route-changed-handler)
+
+(reg-sub :route/current-page (fn [db _] (:route/current-page db)))
+(reg-sub :route/params       (fn [db _] (:route/params db)))

@@ -4,7 +4,7 @@
             [pushy.core :as pushy]
             [shodan.console :as console]
             [sibiro.core :as sibiro]
-            [re-frame.core :as re-frame]))
+            [re-frame.core :as rf]))
 
 (defn- match
   "Try to match a URL, returning a map of {:route-handler :route-params :alternatives}."
@@ -16,7 +16,7 @@
 (defn- dispatch
   "Once the route has been matched, take an action on the dispatched route"
   [{:keys [route-handler route-params alternatives]}]
-  (re-frame/dispatch [:route/changed route-handler route-params]))
+  (rf/dispatch [:route/changed route-handler route-params]))
 
 (defn- start-pushy! []
   (let [history (pushy/pushy dispatch match)]
@@ -28,17 +28,6 @@
 (defn href
   [route-keyword & [params]]
   (sibiro/path-for @table/all-routes route-keyword params))
-
-;; re-frame handlers
-(defn- route-changed-handler
-  [db [_ route-name route-params]]
-  (assoc db :route/current-page route-name
-            :route/params       route-params))
-
-(re-frame/reg-event-db :route/changed route-changed-handler)
-
-(re-frame/reg-sub :route/current-page (fn [db _] (:route/current-page db)))
-(re-frame/reg-sub :route/params       (fn [db _] (:route/params db)))
 
 (defn link
   ([route-name content]

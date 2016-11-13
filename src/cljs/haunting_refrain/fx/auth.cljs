@@ -1,5 +1,5 @@
 (ns haunting-refrain.fx.auth
-  (:require [re-frame.core :as re-frame]
+  (:require [re-frame.core :refer [reg-event-fx reg-cofx reg-sub inject-cofx]]
             [shodan.console :as console]
             [cemerick.url :as url]))
 
@@ -37,35 +37,35 @@
                      (url/query->map))]
     (assoc coeffects :url-fragment frag-map)))
 
-(re-frame/reg-cofx :url-fragment url-fragment-coeffect)
+(reg-cofx :url-fragment url-fragment-coeffect)
 
-(re-frame/reg-sub
+(reg-sub
   :auth/logged-in?
   (fn [db [_ service]]
     (some? (get-in db [:auth/access-token service]))))
 
-(re-frame/reg-event-fx
+(reg-event-fx
   :auth/login
   (fn [_ [_ service]]
     (if-let [url (get-in auth-services [service :auth/url])]
       {:navigate [url :redirect]}
       (console/error "Can't find an authorization url for" service))))
 
-(re-frame/reg-event-fx
+(reg-event-fx
   :auth/logout
   (fn [{:keys [db]} [_ service]]
     (let [new-db (update-in db [:auth/access-token] dissoc service)]
-      {:db      new-db
-       :persist [:hr-persistance (select-keys new-db [:auth/access-token])]})))
+      {:db       new-db
+       :persist! [:hr-persistance (select-keys new-db [:auth/access-token])]})))
 
-(re-frame/reg-event-fx
+(reg-event-fx
   :auth/parse-token
-  [(re-frame/inject-cofx :url-fragment)]
+  [(inject-cofx :url-fragment)]
   (fn [cofx [_ service]]
     (let [token-name (get-in auth-services [service :auth/token])
           token      (get-in cofx [:url-fragment token-name])
           new-db     (assoc-in (:db cofx) [:auth/access-token service] token)]
       (console/log "t" token "tn" token-name)
       {:db       new-db
-       :persist  [:hr-persistance (select-keys new-db [:auth/access-token])]
+       :persist! [:hr-persistance (select-keys new-db [:auth/access-token])]
        :dispatch [:navigate/replace :main/index]})))
