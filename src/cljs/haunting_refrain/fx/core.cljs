@@ -5,6 +5,7 @@
             haunting-refrain.fx.http
             haunting-refrain.fx.local-storage
             haunting-refrain.fx.navigation
+            [haunting-refrain.datascript.core :as datascript]
             [re-frame.core :refer [reg-event-fx inject-cofx]]
             [cemerick.url :as url]))
 
@@ -15,7 +16,9 @@
   "Main re-frame initialization. Retrieves persisted storage from the localStorage key
   :hr-persistance to set up the default database."
   [{:keys [local-storage]} [_]]
-  {:db (merge default-db local-storage)})
+  {:db (-> default-db
+           (merge local-storage)
+           (assoc :ds (datascript/create-connection!)))})
 
 (reg-event-fx
   :initialize-db

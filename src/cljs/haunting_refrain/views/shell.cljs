@@ -1,8 +1,7 @@
 (ns haunting-refrain.views.shell
   (:require [re-frame.core :as rf]
             [haunting-refrain.route.table :as table]
-            [haunting-refrain.views.nav :as nav]
-            [haunting-refrain.components.misc :as misc]))
+            [haunting-refrain.components.nav :as nav]))
 
 (defn- oops [page]
   [:div.container

@@ -1,4 +1,4 @@
-(ns haunting-refrain.views.nav
+(ns haunting-refrain.components.nav
   (:require [re-frame.core :as rf]
             [haunting-refrain.route.router :refer [link]]))
 
