@@ -48,7 +48,10 @@
   "Remove every playlist and its tracks"
   [conn name]
   (console/log "Removing playlist" name)
-  (d/transact! conn [[:db.fn/retractEntity [:playlist/name name]]]))
+  ;; This throws an error
+  ;(d/transact! conn [[:db.fn/retractEntity [:playlist/name name]]])
+  ;(console/log "Removed")
+  )
 
 (defn playlist-rxn [conn name]
   (posh/pull conn '[*] [:playlist/name name]))

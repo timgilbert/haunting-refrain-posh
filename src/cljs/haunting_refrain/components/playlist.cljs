@@ -6,8 +6,9 @@
 (defn single-track [track]
   (let [checkin (:track/checkin track)]
     [:div
-     [:p (u/format-time (:foursquare/date checkin))]
-     [:p (:foursquare/name checkin)]]))
+     [:p (u/format-time (:foursquare/date checkin))
+     [:br]
+     (:foursquare/name checkin)]]))
 
 (defn track-list [tracks]
   (if (empty? tracks)
@@ -21,20 +22,18 @@
         [single-track t]])]]))
 
 (defn existing-playlist [rxn]
+  ;; No idea why I need to deref twice here
   (let [hmm rxn]
     (fn [rxn]
       (let [data @hmm]
         [:section.section
          [:h1 "Playlist " (:playlist/name data)]
-         [track-list (:playlist/tracks data)]]
-        ))
-    ))
+         [track-list (:playlist/tracks data)]]))))
 
 (defn playlist-display [name]
   (let [sub (rf/subscribe [:playlist/contents name])]
     (fn [name]
       (let [data @sub]
-        ;; No idea why I need to deref twice here
         (if (nil? data)
           [:h2 "Nil data"]
           [existing-playlist data])))))

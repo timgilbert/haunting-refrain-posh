@@ -21,6 +21,7 @@
   (let [conn (:datascript db)
         pl (ds/select-random-checkins (d/db conn))]
     (console/log pl)
+    (ds/clear-playlist! conn name)
     (ds/save-playlist! conn name pl))
   db
   )

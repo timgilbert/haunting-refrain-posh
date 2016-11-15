@@ -3,11 +3,12 @@
             [cljs-time.coerce :as c]
             [datascript.core :as d]))
 
-(defn- checkin->db-entry [{:keys [id createdAt isMayor venue event shout] :as item}]
+(defn- checkin->db-entry [{:keys [id createdAt isMayor venue event shout timeZoneOffset]}]
   (let [{:keys [address crossStreet city state country]} (:location venue)
         raw {:db/id                     (d/tempid :db.part/user)
              :foursquare/id             id
              :foursquare/date           createdAt
+             :foursquare/time-zone      timeZoneOffset
              :foursquare/name           (:name venue)
              :foursquare/category       (get-in venue [:categories 0 :name])
              :foursquare/address        address
