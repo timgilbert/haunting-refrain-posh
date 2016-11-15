@@ -5,6 +5,7 @@
             haunting-refrain.fx.http
             haunting-refrain.fx.local-storage
             haunting-refrain.fx.navigation
+            haunting-refrain.fx.playlist
             [haunting-refrain.datascript.core :as datascript]
             [re-frame.core :refer [reg-event-fx inject-cofx]]
             [cemerick.url :as url]))
@@ -18,7 +19,7 @@
   [{:keys [local-storage]} [_]]
   {:db (-> default-db
            (merge local-storage)
-           (assoc :ds (datascript/create-connection!)))})
+           (assoc :datascript (datascript/create-connection!)))})
 
 (reg-event-fx
   :initialize-db

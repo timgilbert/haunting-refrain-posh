@@ -1,5 +1,6 @@
 (ns haunting-refrain.fx.foursquare
   (:require [re-frame.core :refer [reg-event-fx reg-event-db]]
+            [haunting-refrain.datascript.foursquare :as ds]
             [shodan.console :as console]))
 
 (def ^:private foursquare-api-version "20161111")
@@ -31,9 +32,10 @@
     (console/warn "Oh noes! Checkin attempt returned " status ", body:" body)
     db))
 
-(reg-event-db
+(reg-event-fx
   :foursquare/get-checkins-success
-  (fn [db [_ body]]
+  (fn [{:keys [db]} [_ body]]
     (console/log "Woo hoo, success!")
     (console/log body)
-    db))
+    (ds/parse-checkins! (:datascript db) body)
+    {:dispatch [:playlist/generate-random]}))

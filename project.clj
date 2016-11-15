@@ -10,6 +10,7 @@
                  [datascript "0.15.4"]
                  [hodgepodge "0.1.3"]
                  [cljs-http "0.1.42"]
+                 [com.andrewmcveigh/cljs-time "0.4.0"]
                  [shodan "0.4.2"]
                  [functionalbytes/sibiro "0.1.4"]
                  [kibu/pushy "0.3.6"]
