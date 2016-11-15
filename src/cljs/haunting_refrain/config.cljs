@@ -2,3 +2,5 @@
 
 (def debug?
   ^boolean js/goog.DEBUG)
+
+(def default-playlist-name "my-playlist")

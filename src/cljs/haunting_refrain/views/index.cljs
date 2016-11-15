@@ -1,6 +1,8 @@
 (ns haunting-refrain.views.index
   (:require [re-frame.core :as rf]
-            [haunting-refrain.components.misc :as misc]))
+            [haunting-refrain.components.misc :as misc]
+            [haunting-refrain.components.playlist :as pl]
+            [haunting-refrain.config :as config]))
 
 (defn go-button []
   (let [logged-in? (rf/subscribe [:auth/logged-in? :foursquare])]
@@ -22,7 +24,8 @@
     [:p "To get started, log in to Foursquare and Spotify using the links in the top navigation."]
 
     ;; temp
-    [go-button]]])
+    [go-button]
+    [pl/playlist-display config/default-playlist-name]]])
 
 (defn about-page []
   [:div.container

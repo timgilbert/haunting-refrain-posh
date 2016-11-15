@@ -1,7 +1,8 @@
 (ns haunting-refrain.fx.foursquare
   (:require [re-frame.core :refer [reg-event-fx reg-event-db]]
             [haunting-refrain.datascript.foursquare :as ds]
-            [shodan.console :as console]))
+            [shodan.console :as console]
+            [haunting-refrain.config :as config]))
 
 (def ^:private foursquare-api-version "20161111")
 
@@ -38,4 +39,4 @@
     (console/log "Woo hoo, success!")
     (console/log body)
     (ds/parse-checkins! (:datascript db) body)
-    {:dispatch [:playlist/generate-random]}))
+    {:dispatch [:playlist/generate-random config/default-playlist-name]}))
