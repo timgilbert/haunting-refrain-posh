@@ -23,19 +23,26 @@
   (let [conn     (:ds/conn db)
         checkins (ds/select-random-checkins (d/db conn))]
     (console/log "ci:" checkins)
-    ;(ds/clear-playlist! conn name)
     (ds/save-playlist! conn pl-eid checkins))
-  db
-  )
+  db)
 
 (reg-event-db :playlist/generate-random generate-random-playlist)
 
-(defn clear-playlist [db [_ pl-eid]]
-  (console/log "Clearing" pl-eid)
+(defn clear-playlist [db [_ pl-name]]
+  (console/log "Clearing" pl-name)
   (let [conn (:ds/conn db)
-        pl (ds/clear-playlist! conn pl-eid)]
+        pl (ds/clear-playlist! conn [:playlist/name pl-name])]
     (console/log pl)
-    db
-    ))
+    db))
 
 (reg-event-db :playlist/clear-all clear-playlist)
+
+(defn shuffle-input [db [_ pl-name]]
+  (console/log "Shuffling" pl-name)
+  (let [conn (:ds/conn db)
+        pl (ds/shuffle-input-fields! conn [:playlist/name pl-name])]
+    (console/log pl)
+    db))
+
+(reg-event-db :playlist/shuffle-input shuffle-input)
+

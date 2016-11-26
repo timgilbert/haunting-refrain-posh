@@ -24,6 +24,16 @@
          "Clear playlist"]
         [:span]))))
 
+(defn shuffle-button []
+  (let [logged-in? (rf/subscribe [:auth/logged-in? :foursquare])]
+    (fn []
+      (if @logged-in?
+        [misc/big-button
+         {:dispatch [:playlist/shuffle-input config/default-playlist-name]
+          :icon "fa-refresh"}
+         "Shuffle playlist"]
+        [:span]))))
+
 (defn index-page []
   [:div.container
    [:h1.title "Haunting Refrain"]
@@ -36,6 +46,7 @@
     ;; temp
     [go-button]
     [clear-button]
+    [shuffle-button]
     [pl/playlist-display config/default-playlist-name]]])
 
 (defn about-page []

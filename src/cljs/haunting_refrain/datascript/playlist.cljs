@@ -2,7 +2,8 @@
   (:require [shodan.console :as console]
             [cljs-time.core :as t]
             [datascript.core :as d]
-            [posh.reagent :as posh]))
+            [posh.reagent :as posh]
+            [haunting-refrain.model.input :as input]))
 
 ;; TODO: limit by check-in time
 (defn select-random-checkins
@@ -37,16 +38,27 @@
   entity per check-in"
   [conn pl-eid checkin-list]
   (let [tracks (for [[index eid] (map-indexed vector checkin-list)]
-                 (do (console/log (inc index) eid)
                  {:db/id         (d/tempid :db.part/user)
                   :track/number  (inc index)
                   :track/checkin eid
-                  :playlist/_tracks pl-eid}))
+                  :track/selected-field :foursquare/name
+                  :playlist/_tracks pl-eid})
         result (d/transact! conn tracks)]
-    (console/log tracks)
-    ))
+    (console/log tracks)))
 
 (defn clear-playlist!
+  "Remove all tracks from a playlist"
+  [conn playlist-eid]
+  (let [tracks  (d/q '[:find [?t ...]
+                       :in $ ?playlist
+                       :where [?playlist :playlist/tracks ?t]]
+                     (d/db conn) playlist-eid)
+        retract (for [tr tracks]
+                  [:db/retract playlist-eid :playlist/tracks tr])]
+
+    (d/transact! conn retract)))
+
+(defn delete-playlist!
   "Remove a playlist and its tracks"
   [conn playlist-eid]
   (console/log "Removing playlist" playlist-eid)
@@ -54,8 +66,32 @@
   (d/transact! conn [[:db.fn/retractEntity playlist-eid]])
   (console/log "Removed"))
 
-(defn playlist-rxn [conn name]
-  (posh/pull conn '[:playlist/name {:playlist/tracks [:*]}] [:playlist/name name]))
+(defn select-random-field
+  [db checkin-eid]
+  (let [entity (d/touch (d/entity db checkin-eid))]
+    (input/random-field entity)))
 
-(defn playlist-yo [conn name]
-  (d/pull (d/db conn) '[:playlist/name {:playlist/tracks [:*]}] [:playlist/name name]))
+(defn select-input-fields!
+  "For each track in the playlist, select a random field to be used as search data"
+  [conn track-eids]
+  (let [db     (d/db conn)
+        fields (for [track (d/pull-many db '[:db/id {:track/checkin [*]}] track-eids)
+                     :let [field (input/random-field (:track/checkin track))]]
+                 {:db/id                (:db/id track)
+                  :track/selected-field field})]
+    (console/log "f" (doall fields))
+    (d/transact! conn fields)))
+
+(defn get-all-tracks [db playlist-eid]
+  (d/q '[:find [?t ...]
+         :in $ ?playlist
+         :where [?playlist :playlist/tracks ?t]]
+       db playlist-eid))
+
+(defn shuffle-input-fields!
+  [conn playlist-eid]
+  (console/log "all" (get-all-tracks (d/db conn) playlist-eid))
+  (select-input-fields! conn (get-all-tracks (d/db conn) playlist-eid)))
+
+(defn playlist-rxn [conn name]
+  (posh/pull conn '[:playlist/name {:playlist/tracks [*]}] [:playlist/name name]))

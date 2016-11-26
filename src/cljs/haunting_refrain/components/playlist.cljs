@@ -1,14 +1,19 @@
 (ns haunting-refrain.components.playlist
   (:require [re-frame.core :as rf]
             [haunting-refrain.util :as u]
-            [shodan.console :as console]))
+            [shodan.console :as console]
+            [haunting-refrain.model.input :as input]))
 
 (defn- dice [params]
   [:a.card-header-icon
    [:i.fa.fa-refresh]])
 
 (defn single-track [track]
-  (let [checkin (:track/checkin track)]
+  (let [checkin  (:track/checkin track)
+        selected (:track/selected-field track)
+        data     (get checkin selected)
+        reason   (input/explanation checkin selected)]
+    (console/log "track" track)
     [:div.card.is-fullwidth
      [:header.card-header
       [:p.card-header-title
@@ -18,7 +23,9 @@
       [:div.content
       [:p (u/format-time (:foursquare/date checkin))
        [:br]
-       (:foursquare/name checkin)]]]]))
+       (str data)
+       [:br]
+       (str reason)]]]]))
 
 (defn- empty-track-list []
   [:p "no tracks yet"])

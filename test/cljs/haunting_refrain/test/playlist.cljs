@@ -41,7 +41,7 @@
 
         (is (= (count rando) (count tr)))))
     (testing "Clear playlist"
-      (dp/clear-playlist! conn playlist-eid)
+      (dp/delete-playlist! conn playlist-eid)
       ;; No more tracks
       (is (empty? (d/q '[:find [?t ...]
                          :where [_ :playlist/tracks ?t]])))
