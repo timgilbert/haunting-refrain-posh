@@ -23,35 +23,39 @@
      sorted)))
 
 (defn create-empty-playlist!
-  "Given a connection and list of eids, create a new playlist entity and a single track
-  entity per check-in"
+  "Create a new blank playlist, returning its eid"
   [conn name]
-  (let [tx-data [{:db/id           (d/tempid :db.part/user)
-                  :playlist/name   name}]]
-    (d/transact! conn tx-data)))
+  (let [pl-id   (d/tempid :db.part/user)
+        tx-data [{:db/id           pl-id
+                  :playlist/name   name}]
+         tx (d/transact! conn tx-data)]
+    ;(console/log "tx" (pr-str tx))
+    (-> tx :tempids (get pl-id))))
 
 (defn save-playlist!
   "Given a connection and list of eids, create a new playlist entity and a single track
   entity per check-in"
-  [conn name checkin-list]
+  [conn pl-eid checkin-list]
   (let [tracks (for [[index eid] (map-indexed vector checkin-list)]
+                 (do (console/log (inc index) eid)
                  {:db/id         (d/tempid :db.part/user)
                   :track/number  (inc index)
-                  :track/checkin eid})
-        tx-data [{:db/id           (d/tempid :db.part/user)
-                  :playlist/name   name
-                  :playlist/tracks tracks}]]
-    (d/transact! conn tx-data))
-    )
+                  :track/checkin eid
+                  :playlist/_tracks pl-eid}))
+        result (d/transact! conn tracks)]
+    (console/log tracks)
+    ))
 
 (defn clear-playlist!
-  "Remove every playlist and its tracks"
-  [conn name]
-  (console/log "Removing playlist" name)
+  "Remove a playlist and its tracks"
+  [conn playlist-eid]
+  (console/log "Removing playlist" playlist-eid)
   ;; This throws an error
-  ;(d/transact! conn [[:db.fn/retractEntity [:playlist/name name]]])
-  ;(console/log "Removed")
-  )
+  (d/transact! conn [[:db.fn/retractEntity playlist-eid]])
+  (console/log "Removed"))
 
 (defn playlist-rxn [conn name]
-  (posh/pull conn '[*] [:playlist/name name]))
+  (posh/pull conn '[:playlist/name {:playlist/tracks [:*]}] [:playlist/name name]))
+
+(defn playlist-yo [conn name]
+  (d/pull (d/db conn) '[:playlist/name {:playlist/tracks [:*]}] [:playlist/name name]))

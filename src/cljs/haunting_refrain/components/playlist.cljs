@@ -3,31 +3,42 @@
             [haunting-refrain.util :as u]
             [shodan.console :as console]))
 
+(defn- dice [params]
+  [:a.card-header-icon
+   [:i.fa.fa-refresh]])
+
 (defn single-track [track]
   (let [checkin (:track/checkin track)]
-    [:div
-     [:p (u/format-time (:foursquare/date checkin))
-     [:br]
-     (:foursquare/name checkin)]]))
+    [:div.card.is-fullwidth
+     [:header.card-header
+      [:p.card-header-title
+       (str "Track " (:track/number track))]
+      [dice ]]
+     [:div.card-content
+      [:div.content
+      [:p (u/format-time (:foursquare/date checkin))
+       [:br]
+       (:foursquare/name checkin)]]]]))
+
+(defn- empty-track-list []
+  [:p "no tracks yet"])
 
 (defn track-list [tracks]
   (if (empty? tracks)
-    [:p "no tracks yet"]
-    [:div
-     (console/log "tracks" tracks)
-     [:ol
-     (for [t tracks]
-       ^{:key (:db/id t)}
-       [:li
-        [single-track t]])]]))
+    [empty-track-list]
+    [:div.columns
+     [:div.column
+      (for [t tracks]
+        ^{:key (:db/id t)}
+        [single-track t])]]))
 
 (defn existing-playlist [rxn]
   ;; No idea why I need to deref twice here
   (let [hmm rxn]
     (fn [rxn]
-      (let [data @hmm]
+      (let [data @rxn]
         [:section.section
-         [:h1 "Playlist " (:playlist/name data)]
+         [:h1.title "Playlist " (:playlist/name data)]
          [track-list (:playlist/tracks data)]]))))
 
 (defn playlist-display [name]

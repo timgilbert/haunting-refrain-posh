@@ -17,9 +17,9 @@
   "Main re-frame initialization. Retrieves persisted storage from the localStorage key
   :hr-persistance to set up the default database."
   [{:keys [local-storage]} [_]]
-  {:db (-> default-db
-           (merge local-storage)
-           (assoc :datascript (datascript/create-connection!)))})
+  (let [ds-map (datascript/initialize-connection!)]
+    {:db (-> default-db
+             (merge local-storage ds-map))}))
 
 (reg-event-fx
   :initialize-db

@@ -38,5 +38,5 @@
   (fn [{:keys [db]} [_ body]]
     (console/log "Woo hoo, success!")
     (console/log body)
-    (ds/parse-checkins! (:datascript db) body)
-    {:dispatch [:playlist/generate-random config/default-playlist-name]}))
+    (ds/parse-checkins! (:ds/conn db) body)
+    {:dispatch [:playlist/generate-random (:ds/playlist db)]}))

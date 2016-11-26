@@ -30,4 +30,4 @@
         items   (get-in checkin-response [:response :checkins :items])
         tx-data (map checkin->db-entry items)
         result  (d/transact! conn tx-data)]
-    (console/log "Parsed" (count items) "check-ins")))
+    (console/log "Parsed" (count items) "of" total "check-ins")))

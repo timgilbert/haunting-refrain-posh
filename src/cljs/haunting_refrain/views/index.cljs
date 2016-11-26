@@ -14,6 +14,16 @@
          "Get Checkins!"]
         [:b "Log in to get checkins"]))))
 
+(defn clear-button []
+  (let [logged-in? (rf/subscribe [:auth/logged-in? :foursquare])]
+    (fn []
+      (if @logged-in?
+        [misc/big-button
+         {:dispatch [:playlist/clear-all config/default-playlist-name]
+          :icon "fa-trash"}
+         "Clear playlist"]
+        [:span]))))
+
 (defn index-page []
   [:div.container
    [:h1.title "Haunting Refrain"]
@@ -25,6 +35,7 @@
 
     ;; temp
     [go-button]
+    [clear-button]
     [pl/playlist-display config/default-playlist-name]]])
 
 (defn about-page []
