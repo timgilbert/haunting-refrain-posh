@@ -44,7 +44,7 @@
       [:div.nav-left
        [nav-link :main/index "Haunting Refrain"]]
       [:div.nav-center
-       [:a.nav-item {:href "https://github.com/timgilbert"}
+       [:a.nav-item {:href "https://github.com/timgilbert/haunting-refrain-posh"}
         [:span.icon [:i {:class "fa fa-github"}]]]]
       [:div.nav-right
        [foursquare-icon]

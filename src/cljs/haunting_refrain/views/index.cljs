@@ -49,7 +49,3 @@
     [shuffle-button]
     [pl/playlist-display config/default-playlist-name]]])
 
-(defn about-page []
-  [:div.container
-   [:h1.title "About Haunting Refrain"]
-   [:p "Haunting Refrain was assembled byte by byte by me, Tim Gilbert."]])

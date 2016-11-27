@@ -5,7 +5,8 @@
             [haunting-refrain.views.foursquare :as foursquare]
             [haunting-refrain.views.spotify :as spotify]
             [haunting-refrain.views.misc :as misc]
-            [haunting-refrain.views.index :as index]))
+            [haunting-refrain.views.index :as index]
+            [haunting-refrain.views.about :as about]))
 
 
 (def ^:private route-definitions
@@ -15,7 +16,7 @@
     :route/page index/index-page}
    :main/about
    {:route/url  "/about"
-    :route/page index/about-page}
+    :route/page about/about-page}
    :foursquare/login
    {:route/url  "/foursquare"
     :route/page foursquare/foursquare-page}

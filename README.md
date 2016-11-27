@@ -5,25 +5,44 @@ Experiment with [datascript](https://github.com/tonsky/datascript) +
 
 ## Development Mode
 
-### Run application:
+Basically, `lein repl`, `(fig)`, `(cljs)`. I generally connect to the nrepl
+from IntelliJ, so the sequence looks roughly like this:
 
 ```
-lein clean
-lein figwheel dev
+lein repl
+Loading sidecar...
+nREPL server started on port 4444 on host 0.0.0.0 - nrepl://0.0.0.0:4444
+[...]
+user=> 
 ```
 
-Figwheel will automatically push cljs changes to the browser.
+Connect an IntelliJ remote nREPL to localhost:4444, or just continue with the terminal.
 
-Wait a bit, then browse to [http://localhost:3449](http://localhost:3449).
+```
+user=> (fig)
+Figwheel: Starting server at http://0.0.0.0:3449
+Figwheel: Watching build - dev
+Compiling "resources/public/js/compiled/app.js" from ["src/cljs"]...
+()
+Successfully compiled "resources/public/js/compiled/app.js" in 19.139 seconds.
+Figwheel: Starting CSS Watcher for paths  ["resources/public/css"]
+nil
+user=> (cljs)
+Launching ClojureScript REPL for build: dev
+[...]
+```
+
+Some time after the above, open your browser to [http://localhost:3449/](http://localhost:3449/).
+After it connects you'll get your `user=>` prompt back, and you should be able to
+`(.alert js/window "Whoopee!")` and see the result in your browser.
 
 ### Run tests:
 
 ```
-lein clean
-lein doo phantom test once
+lein doo phantom test
 ```
 
-The above command assumes that you have [phantomjs](https://www.npmjs.com/package/phantomjs) installed. However, please note that [doo](https://github.com/bensu/doo) can be configured to run cljs.test in many other JS environments (chrome, ie, safari, opera, slimer, node, rhino, or nashorn).
+This runs the tests and then watches for chages to files after which it re-runs them.
 
 ## Production Build
 
