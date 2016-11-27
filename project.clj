@@ -1,4 +1,4 @@
-(defproject haunting-refrain "0.3.0-SNAPSHOT"
+(defproject haunting-refrain "0.3.0"
   :pedantic? :warn
   :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
                  [org.clojure/clojurescript "1.9.293"]
