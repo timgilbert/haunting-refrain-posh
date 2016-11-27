@@ -39,10 +39,10 @@
    {:source-paths ["src/clj" "etc/repl"]
     :dependencies [[binaryage/devtools "0.8.3"]
                    [ring "1.5.0"]
-                   [lein-shell "0.5.0"]
                    [figwheel-sidecar "0.5.8"]
                    [com.cemerick/piggieback "0.2.1"]]
     :plugins      [[lein-figwheel "0.5.8" :exclusions [org.clojure/clojure]]
+                   [lein-shell "0.5.0"]
                    [lein-doo "0.1.7"]
                    [lein-ancient "0.6.10"]]}}
 
