@@ -1,5 +1,5 @@
 (ns haunting-refrain.fx.foursquare
-  (:require [re-frame.core :refer [reg-event-fx reg-event-db]]
+  (:require [re-frame.core :refer [reg-event-fx reg-event-db inject-cofx]]
             [haunting-refrain.datascript.foursquare :as ds]
             [shodan.console :as console]
             [haunting-refrain.config :as config]
@@ -9,7 +9,7 @@
 
 (defn- foursquare-api
   "Return the route to a foursquare API endpoint"
-  [endpoint token]
+  [origin endpoint token]
   (str "https://api.foursquare.com/v2/"
        endpoint
        "?oauth_token=" token
@@ -17,16 +17,19 @@
 
 (defn get-checkins
   "Persist an object into localStorage at the given key."
-  [{:keys [db]} [_]]
+  [{:keys [db origin]} [_]]
   (let [token (get-in db [:auth/access-token :foursquare])]
     {:dispatch [:http/request
                 {:method     :get
                  :endpoint   :foursquare/get-checkins
-                 :url        (foursquare-api "users/self/checkins" token)
+                 :url        (foursquare-api origin "users/self/checkins" token)
                  :on-success :foursquare/get-checkins-success
                  :on-failure :foursquare/get-checkins-failure}]}))
 
-(reg-event-fx :foursquare/get-checkins get-checkins)
+(reg-event-fx
+  :foursquare/get-checkins
+  [(inject-cofx :origin)]
+  get-checkins)
 
 (reg-event-db
   :foursquare/get-checkins-failure
