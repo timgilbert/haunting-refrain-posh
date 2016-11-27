@@ -1,0 +1,3 @@
+test:
+  override:
+    - lein with-profile test doo phantom test once
