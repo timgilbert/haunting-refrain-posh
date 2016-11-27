@@ -24,8 +24,7 @@
 
   :source-paths ["src/clj" "src/cljs"]
 
-  :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"
-                                    "test/js"]
+  :clean-targets ^{:protect false} ["resources/public/js/compiled" "target" "test/js"]
 
   :figwheel {:css-dirs ["resources/public/css"]
              :ring-handler haunting-refrain.core/handler}
@@ -36,14 +35,17 @@
 
   :profiles
   {:dev
-   {:dependencies [[binaryage/devtools "0.8.3"]
+   {:source-paths ["src/clj" "etc/repl"]
+    :dependencies [[binaryage/devtools "0.8.3"]
                    [ring "1.5.0"]
                    [figwheel-sidecar "0.5.8"]
                    [com.cemerick/piggieback "0.2.1"]]
 
     :plugins      [[lein-figwheel "0.5.8" :exclusions [org.clojure/clojure]]
                    [lein-doo "0.1.7"]
-                   [lein-ancient "0.6.10"]]}}
+                   [lein-ancient "0.6.10"]]}
+   :prod
+   {:plugins      []}}
 
   :cljsbuild
   {:builds

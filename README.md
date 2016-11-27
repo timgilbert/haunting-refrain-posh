@@ -47,9 +47,9 @@ This runs the tests and then watches for chages to files after which it re-runs 
 ## Production Build
 
 
-To compile clojurescript to javascript:
+To compile an advanced clojurescript build:
 
 ```
 lein clean
-lein cljsbuild once min
+lein with-profile prod cljsbuild once min
 ```
