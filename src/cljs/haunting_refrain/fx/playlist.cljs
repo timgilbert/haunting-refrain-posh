@@ -8,12 +8,8 @@
 
 ;; Subscription for the big list of checkins that forms a playlist
 (defn- playlist-by-name
-  [db [_ name]]
-  ;(reaction (ds/playlist-rxn (:datascript @db) name))
-  (let [x (ds/playlist-rxn (:ds/conn db) name)]
-    (console/log x)
-    x)
-  )
+  [db [_ pl-name]]
+  (ds/playlist-rxn (:ds/conn db) [:playlist/name pl-name]))
 
 (reg-sub :playlist/contents playlist-by-name)
 
@@ -45,4 +41,10 @@
     db))
 
 (reg-event-db :playlist/shuffle-input shuffle-input)
+
+(defn search-by-checkin! [{:keys [db]} [_ track]]
+  (console/log "Searching" track)
+  {:dispatch [:spotify/search-by-checkin track]})
+
+(reg-event-fx :playlist/search-by-checkin search-by-checkin!)
 

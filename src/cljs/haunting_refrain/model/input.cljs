@@ -6,35 +6,25 @@
 (def input-weights
   "Weighted probability list. For each field in the list"
   {:foursquare/name
-   {:explanation "You checked in at a place called XXX"
-    :probability 10}
+   {:probability 10}
    :foursquare/event
-   {:explanation "You checked in to an event called XXX"
-    :probability 10}
+   {:probability 10}
    :foursquare/event-type
-   {:explanation "You checked into an XXX event"
-    :probability 5}
+   {:probability 5}
    :foursquare/category
-   {:explanation "You checked in at a XXX type of place"
-    :probability 3}
+   {:probability 3}
    :foursquare/address
-   {:explanation "You checked in at a place located at XXX"
-    :probability 3}
+   {:probability 3}
    :foursquare/city
-   {:explanation "You checked in at a place in the city XXX"
-    :probability 2}
+   {:probability 2}
    :foursquare/state
-   {:explanation "You checked in at a place in the state XXX"
-    :probability 1}
+   {:probability 1}
    :foursquare/country
-   {:explanation "You checked in at a place in the country XXX"
-    :probability 1}
+   {:probability 1}
    :foursquare/shout
-   {:explanation "You said this in your checkin: XXX"
-    :probability 5}
+   {:probability 5}
    :foursquare/cross
-   {:explanation "You checked in at a place at XXX"
-    :probability 2}})
+   {:probability 2}})
 
 (defn explanation [input-data selected-field]
   (let [data (get input-data selected-field)

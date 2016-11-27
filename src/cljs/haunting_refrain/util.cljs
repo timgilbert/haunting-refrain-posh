@@ -8,4 +8,4 @@
        (* 1000)
        (c/from-long)
        (t/to-default-time-zone)
-       (f/unparse (f/formatters :rfc822))))
+       (f/unparse (f/formatter "EEEE, MMMM dd"))))

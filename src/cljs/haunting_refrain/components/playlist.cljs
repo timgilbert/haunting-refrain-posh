@@ -2,30 +2,37 @@
   (:require [re-frame.core :as rf]
             [haunting-refrain.util :as u]
             [shodan.console :as console]
-            [haunting-refrain.model.input :as input]))
+            [haunting-refrain.model.input :as input]
+            [haunting-refrain.components.explanation :as explanation]))
 
-(defn- dice [params]
+(defn- dice [track]
   [:a.card-header-icon
+   {:on-click #(rf/dispatch [:playlist/search-by-checkin track])}
    [:i.fa.fa-refresh]])
 
+(defn song-details [song]
+  [:div.media
+   [:div.media-left
+    [:figure.image.is-128x128
+     [:img {:src (:spotify/album-thumb song)}]]]
+   [:div.media-content
+    [:p.title.is-5
+     (:spotify/track-name song)]
+    [:p.title.is-6
+     (:spotify/artist-name song)]]])
+
 (defn single-track [track]
-  (let [checkin  (:track/checkin track)
-        selected (:track/selected-field track)
-        data     (get checkin selected)
-        reason   (input/explanation checkin selected)]
-    (console/log "track" track)
+  (let [song (:track/selected-song track)]
     [:div.card.is-fullwidth
      [:header.card-header
       [:p.card-header-title
        (str "Track " (:track/number track))]
-      [dice ]]
+      [dice track]]
      [:div.card-content
       [:div.content
-      [:p (u/format-time (:foursquare/date checkin))
-       [:br]
-       (str data)
-       [:br]
-       (str reason)]]]]))
+       [explanation/reason track]
+       (when song
+         [song-details song])]]]))
 
 (defn- empty-track-list []
   [:p "no tracks yet"])

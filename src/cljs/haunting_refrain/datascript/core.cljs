@@ -7,12 +7,15 @@
             [shodan.console :as console]))
 
 (def ^:private hr-schema
-  {:playlist/tracks {:db/cardinality :db.cardinality/many
-                     :db/valueType :db.type/ref
-                     :db/isComponent true}
-   :playlist/name   {:db/unique :db.unique/identity}
-   :track/checkin   {:db/valueType :db.type/ref
-                     :db/isComponent true}})
+  {:playlist/tracks     {:db/cardinality :db.cardinality/many
+                         :db/valueType   :db.type/ref
+                         :db/isComponent true}
+   :playlist/name       {:db/unique      :db.unique/identity}
+   :track/checkin       {:db/valueType   :db.type/ref
+                         :db/isComponent true}
+   :track/selected-song {:db/valueType   :db.type/ref
+                         :db/isComponent true}
+   :spotify/track       {:db/valueType   :db.type/ref}})
 
 (defn create-db! []
   (let [conn (d/create-conn hr-schema)]

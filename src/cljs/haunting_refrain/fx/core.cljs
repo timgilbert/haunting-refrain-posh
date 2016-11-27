@@ -6,6 +6,7 @@
             haunting-refrain.fx.local-storage
             haunting-refrain.fx.navigation
             haunting-refrain.fx.playlist
+            haunting-refrain.fx.spotify
             [haunting-refrain.datascript.core :as datascript]
             [re-frame.core :refer [reg-event-fx inject-cofx]]
             [cemerick.url :as url]))

@@ -93,5 +93,5 @@
   (console/log "all" (get-all-tracks (d/db conn) playlist-eid))
   (select-input-fields! conn (get-all-tracks (d/db conn) playlist-eid)))
 
-(defn playlist-rxn [conn name]
-  (posh/pull conn '[:playlist/name {:playlist/tracks [*]}] [:playlist/name name]))
+(defn playlist-rxn [conn playlist-eid]
+  (posh/pull conn '[:playlist/name {:playlist/tracks [*]}] playlist-eid))

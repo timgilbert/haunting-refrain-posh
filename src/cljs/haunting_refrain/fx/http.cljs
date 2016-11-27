@@ -36,6 +36,14 @@
 
 (reg-event-fx :http/request http-request)
 
+(defn- http-dispatch
+  "Convenience method for generating a success/failure vector after HTTP return"
+  [on-success body status]
+  (into (if (sequential? on-success)
+          on-success
+          [on-success])
+        [body status]))
+
 (defn- http-success
   "Event that fires when an http request comes back with a 200 response. Dispatch an on-success
   event (from the argument map of the original [:http/request] event) with the result body."
@@ -43,7 +51,7 @@
   (merge
     {:db (update-in db [:http/loading?] dissoc endpoint)}
     (when on-success
-      {:dispatch [on-success body]})))
+      {:dispatch (http-dispatch on-success body 200)})))
 
 (reg-event-fx :http/success http-success)
 
@@ -54,7 +62,7 @@
   (merge
     {:db (update-in db [:http/requests] dissoc endpoint)}
     (when on-failure
-      {:dispatch [on-failure body status]})))
+      {:dispatch (http-dispatch on-failure body status)})))
 
 (reg-event-fx :http/failure http-failure)
 
