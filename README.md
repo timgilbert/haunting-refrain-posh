@@ -3,6 +3,8 @@
 Experiment with [datascript](https://github.com/tonsky/datascript) + 
 [posh](https://github.com/mpdairy/posh) + [re-frame](https://github.com/Day8/re-frame)
 
+[![CircleCI](https://circleci.com/gh/timgilbert/haunting-refrain-posh/tree/develop.svg?style=svg)](https://circleci.com/gh/timgilbert/haunting-refrain-posh/tree/develop)
+
 ## Development Mode
 
 Basically, `lein repl`, `(fig)`, `(cljs)`. I generally connect to the nrepl

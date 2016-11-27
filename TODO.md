@@ -43,7 +43,6 @@ my handlers, and then use dynamic subscriptions for the front-end.
 - Make it prettier
 - Mobile interface via swipes / taps, shake.js
 
-## Deployment
+## Etc
 
-- Hook to CircleCI etc
-- Deploy on successful master build (github pages? netlify?)
+- Scrub PII out of test-checkin file
