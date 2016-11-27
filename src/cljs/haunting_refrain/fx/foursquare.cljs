@@ -2,7 +2,8 @@
   (:require [re-frame.core :refer [reg-event-fx reg-event-db]]
             [haunting-refrain.datascript.foursquare :as ds]
             [shodan.console :as console]
-            [haunting-refrain.config :as config]))
+            [haunting-refrain.config :as config]
+            [haunting-refrain.datascript.util :as u]))
 
 (def ^:private foursquare-api-version "20161111")
 
@@ -36,7 +37,8 @@
 (reg-event-fx
   :foursquare/get-checkins-success
   (fn [{:keys [db]} [_ body]]
-    (console/log "Woo hoo, success!")
-    (console/log body)
-    (ds/parse-checkins! (:ds/conn db) body)
-    {:dispatch [:playlist/generate-random (:ds/playlist db)]}))
+    (let [{:keys [:ds/conn :ds/playlist]} db]
+      (console/log "Got " (-> body :response :checkins :items count) "checkins from foursquare")
+      (u/clear-playlist! conn playlist)
+      (ds/parse-checkins! conn body)
+      {:dispatch [:playlist/generate-random playlist]})))

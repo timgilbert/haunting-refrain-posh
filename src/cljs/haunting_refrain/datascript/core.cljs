@@ -13,6 +13,10 @@
    :playlist/name       {:db/unique      :db.unique/identity}
    :track/checkin       {:db/valueType   :db.type/ref
                          :db/isComponent true}
+   :seed/checkin        {:db/valueType   :db.type/ref}
+   :seed/datum          {:db/unique      :db.unique/identity}
+   :track/seed          {:db/valueType   :db.type/ref
+                         :db/isComponent true}
    :track/selected-song {:db/valueType   :db.type/ref
                          :db/isComponent true}
    :spotify/track       {:db/valueType   :db.type/ref}})

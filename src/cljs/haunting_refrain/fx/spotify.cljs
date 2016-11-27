@@ -16,30 +16,29 @@
   [track]
   (get-in track [:track/checkin (:track/selected-field track)]))
 
-(defn search-by-checkin
+(defn search-by-track
   "Persist an object into localStorage at the given key."
   [_ [_ track]]
-  (let [search (query-from-checkin track)]
-    {:dispatch [:http/request
-                {:method     :get
-                 :endpoint   :spotify/search-by-checkin
-                 :url        (spotify-search-url search)
-                 :on-success [:spotify/search-success search track]
-                 :on-failure [:spotify/search-failure search track]}]}))
+  {:dispatch [:http/request
+              {:method     :get
+               :endpoint   :spotify/search-by-track
+               :url        (spotify-search-url (-> track :track/seed :seed/datum))
+               :on-success [:spotify/search-success track]
+               :on-failure [:spotify/search-failure track]}]})
 
-(reg-event-fx :spotify/search-by-checkin search-by-checkin)
+(reg-event-fx :spotify/search-by-track search-by-track)
 
 (reg-event-db
   :spotify/search-failure
-  (fn [db [_ search track body status]]
-    (console/warn "Oh noes! Spotify search for" search " returned " status ", body:" body)
+  (fn [db [_ seed body status]]
+    (console/warn "Oh noes! Spotify search for" (:seed/datum seed) " returned " status ", body:" body)
     db))
 
 (reg-event-fx
   :spotify/search-success
-  (fn [{:keys [db]} [_ search track body]]
-    (console/log "Search for" (query-from-checkin track) "found"
+  (fn [{:keys [db]} [_ track body]]
+    (console/log "Search for" (-> track :track/seed :seed/datum) "found"
                  (get-in body [:tracks :total]) "tracks!")
-    (sp/parse-songs! (:ds/conn db) search track body)
+    (sp/parse-songs! (:ds/conn db) (:track/seed track) body)
     (sp/select-random-song! (:ds/conn db) track)
     {:db db}))

@@ -7,32 +7,43 @@
 
 (defn- dice [track]
   [:a.card-header-icon
-   {:on-click #(rf/dispatch [:playlist/search-by-checkin track])}
+   {:on-click #(rf/dispatch [:spotify/search-by-track track])}
    [:i.fa.fa-refresh]])
 
-(defn song-details [song]
+(defn song-details [track]
+  (let [{:keys [:spotify/track-name :spotify/artist-name
+                :spotify/album-name :spotify/album-thumb]} (:track/selected-song track)]
+    [:div.media
+     [:div.media-left
+      [:figure.image.is-128x128
+       [:img {:src album-thumb}]]]
+     [:div.media-content
+      [:p.title.is-5
+       track-name]
+      [:p.title.is-6
+       artist-name " / " album-name]
+      [explanation/reason track]
+      ]]))
+
+(defn song-not-found [track]
   [:div.media
    [:div.media-left
     [:figure.image.is-128x128
-     [:img {:src (:spotify/album-thumb song)}]]]
+     [:img ]]]
    [:div.media-content
-    [:p.title.is-5
-     (:spotify/track-name song)]
-    [:p.title.is-6
-     (:spotify/artist-name song)]]])
+    [explanation/reason track]]])
 
 (defn single-track [track]
-  (let [song (:track/selected-song track)]
-    [:div.card.is-fullwidth
-     [:header.card-header
-      [:p.card-header-title
-       (str "Track " (:track/number track))]
-      [dice track]]
-     [:div.card-content
-      [:div.content
-       [explanation/reason track]
-       (when song
-         [song-details song])]]]))
+  [:div.card.is-fullwidth
+   [:header.card-header
+    [:p.card-header-title
+     (str "Track " (:track/number track))]
+    [dice track]]
+   [:div.card-content
+    [:div.content
+     (if (:track/selected-song track)
+       [song-details track]
+       [song-not-found track])]]])
 
 (defn- empty-track-list []
   [:p "no tracks yet"])

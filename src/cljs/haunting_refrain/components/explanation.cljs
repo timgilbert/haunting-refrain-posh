@@ -5,78 +5,79 @@
 
 (defmethod explanation :foursquare/name
   [{:keys [venue date datum]}]
-  [:div.reason
+  [:div.message-body
    "On " [:strong date] ", "
-   "you checked in to a place called "
+   "you checked in on Foursquare to a place called "
    [:strong venue] "."])
 
 (defmethod explanation :foursquare/event
   [{:keys [venue date datum]}]
-  [:div.reason
+  [:div.message-body
    "On " [:strong date] ", "
-   "you checked in to " [:span.venue venue] " "
+   "you checked in on Foursquare to " [:span.venue venue] " "
    "for an event called " [:strong datum] "."])
 
 (defmethod explanation :foursquare/event-type
   [{:keys [venue date datum]}]
-  [:div.reason
+  [:div.message-body
    "On " [:strong date] ", "
-   "you checked in to " [:span.venue venue] " "
+   "you checked in on Foursquare to " [:span.venue venue] " "
    "for a " [:strong datum] "type of event."])
 
 (defmethod explanation :foursquare/category
   [{:keys [venue date datum]}]
-  [:div.reason
+  [:div.message-body
    "On " [:strong date] ", "
-   "you checked in to " [:span.venue venue] ", "
+   "you checked in on Foursquare to " [:span.venue venue] ", "
    "which is a " [:strong datum] "."])
 
 (defmethod explanation :foursquare/address
   [{:keys [venue date datum]}]
-  [:div.reason
+  [:div.message-body
    "On " [:strong date] ", "
-   "you checked in to " [:span.venue venue] ", "
-   "located at " [:strong datum] "."])
+   "you checked in on Foursquare to " [:span.venue venue] ", "
+   "located on " [:strong datum] "."])
 
 (defmethod explanation :foursquare/cross
   [{:keys [venue date datum]}]
-  [:div.reason
+  [:div.message-body
    "On " [:strong date] ", "
-   "you checked in to " [:span.venue venue] ", "
-   "located at " [:strong datum] "."])
+   "you checked in on Foursquare to " [:span.venue venue] ", "
+   "located on " [:strong datum] "."])
 
 (defmethod explanation :foursquare/city
   [{:keys [venue date datum]}]
-  [:div.reason
+  [:div.message-body
    "On " [:strong date] ", "
-   "you checked in to " [:span.venue venue] " "
+   "you checked in on Foursquare to " [:span.venue venue] " "
    "in the city of " [:strong datum] "."])
 
 (defmethod explanation :foursquare/state
   [{:keys [venue date datum]}]
-  [:div.reason
+  [:div.message-body
    "On " [:strong date] ", "
-   "you checked in to " [:span.venue venue] " "
+   "you checked in on Foursquare to " [:span.venue venue] " "
    "in the state of " [:strong datum] "."])
 
 (defmethod explanation :foursquare/country
   [{:keys [venue date datum]}]
-  [:div.reason
+  [:div.message-body
    "On " [:strong date] ", "
-   "you checked in to " [:span.venue venue] " "
+   "you checked in on Foursquare to " [:span.venue venue] " "
    "in the country of " [:strong datum] "."])
 
 (defmethod explanation :foursquare/shout
   [{:keys [venue date datum]}]
-  [:div.reason
+  [:div.message-body
    "On " [:strong date] ", "
-   "you checked in to " [:span.venue venue] " "
-   "and commented, &quot;" [:strong datum] "&quot;."])
+   "you checked in on Foursquare to " [:span.venue venue] " "
+   "and commented: \"" [:strong datum] "\"."])
 
 (defn reason [track]
-  (let [checkin  (:track/checkin track)
-        selected (:track/selected-field track)]
-    (explanation {:selected selected
-                  :date     (u/format-time (:foursquare/date checkin))
-                  :venue    (:foursquare/name checkin)
-                  :datum    (get checkin selected)})))
+  (let [seed    (:track/seed track)
+        checkin (:track/checkin track)]
+    [:div.message
+     (explanation {:selected (:seed/field seed)
+                   :date     (u/format-time (:foursquare/date checkin))
+                   :venue    (:foursquare/name checkin)
+                   :datum    (:seed/datum seed)})]))

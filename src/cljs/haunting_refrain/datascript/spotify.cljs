@@ -7,10 +7,9 @@
 
 ;; https://developer.spotify.com/web-api/object-model/#track-object
 (defn spotify-track->db-entry
-  [search ds-track-record spotify-track]
+  [seed spotify-track]
   (let [raw {:db/id               (d/tempid :db.part/user)
-             :spotify/search      search
-             :spotify/track       (:db/id ds-track-record)
+             :spotify/seed        (:db/id seed)
              :spotify/track-name  (:name spotify-track)
              :spotify/artist-name (get-in spotify-track [:artists 0 :name])
              :spotify/artist-id   (get-in spotify-track [:artists 0 :id])
@@ -20,9 +19,9 @@
     raw))
 
 (defn parse-songs!
-  [conn search track body]
+  [conn seed body]
   (let [items   (get-in body [:tracks :items])
-        tx-data (map (partial spotify-track->db-entry search track) items)]
+        tx-data (map (partial spotify-track->db-entry seed) items)]
     (d/transact! conn tx-data)))
 
 (defn select-random-song!
@@ -30,7 +29,8 @@
   (let [track-eid (:db/id track)
         all (d/q '[:find [?s ...]
                    :in $ ?track
-                   :where [?s :spotify/track ?track]]
+                   :where [?track :track/seed ?seed]
+                          [?s :spotify/seed ?seed]]
                    (d/db conn) track-eid)
         rnd (when-not (empty? all)
               (rand-nth all))]

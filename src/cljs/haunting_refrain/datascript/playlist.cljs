@@ -3,7 +3,9 @@
             [cljs-time.core :as t]
             [datascript.core :as d]
             [posh.reagent :as posh]
-            [haunting-refrain.model.input :as input]))
+            [haunting-refrain.model.input :as input]
+            [haunting-refrain.datascript.seed :as seed]
+            [haunting-refrain.datascript.util :as u]))
 
 ;; TODO: limit by check-in time
 (defn select-random-checkins
@@ -20,7 +22,7 @@
                      (take size)
                      (sort #(> (first %1) (first %2))) ; sort by date
                      (map second))] ; extract eid
-     (console/log sorted)
+     ;(console/log sorted)
      sorted)))
 
 (defn create-empty-playlist!
@@ -41,37 +43,23 @@
                  {:db/id         (d/tempid :db.part/user)
                   :track/number  (inc index)
                   :track/checkin eid
-                  :track/selected-field :foursquare/name
-                  :playlist/_tracks pl-eid})
-        result (d/transact! conn tracks)]
-    (console/log tracks)))
-
-(defn clear-playlist!
-  "Remove all tracks from a playlist"
-  [conn playlist-eid]
-  (let [tracks  (d/q '[:find [?t ...]
-                       :in $ ?playlist
-                       :where [?playlist :playlist/tracks ?t]]
-                     (d/db conn) playlist-eid)
-        retract (for [tr tracks]
-                  [:db/retract playlist-eid :playlist/tracks tr])]
-
-    (d/transact! conn retract)))
+                  ;:track/selected-field :foursquare/name
+                  :playlist/_tracks pl-eid})]
+    (d/transact! conn tracks)))
 
 (defn delete-playlist!
   "Remove a playlist and its tracks"
   [conn playlist-eid]
   (console/log "Removing playlist" playlist-eid)
   ;; This throws an error
-  (d/transact! conn [[:db.fn/retractEntity playlist-eid]])
-  (console/log "Removed"))
+  (d/transact! conn [[:db.fn/retractEntity playlist-eid]]))
 
-(defn select-random-field
+#_(defn select-random-field
   [db checkin-eid]
   (let [entity (d/touch (d/entity db checkin-eid))]
     (input/random-field entity)))
 
-(defn select-input-fields!
+#_(defn select-input-fields!
   "For each track in the playlist, select a random field to be used as search data"
   [conn track-eids]
   (let [db     (d/db conn)
@@ -79,19 +67,13 @@
                      :let [field (input/random-field (:track/checkin track))]]
                  {:db/id                (:db/id track)
                   :track/selected-field field})]
-    (console/log "f" (doall fields))
+    ;(console/log "f" (doall fields))
     (d/transact! conn fields)))
-
-(defn get-all-tracks [db playlist-eid]
-  (d/q '[:find [?t ...]
-         :in $ ?playlist
-         :where [?playlist :playlist/tracks ?t]]
-       db playlist-eid))
 
 (defn shuffle-input-fields!
   [conn playlist-eid]
-  (console/log "all" (get-all-tracks (d/db conn) playlist-eid))
-  (select-input-fields! conn (get-all-tracks (d/db conn) playlist-eid)))
+  ;(select-input-fields! conn (u/get-playlist-tracks conn playlist-eid))
+  (seed/attach-seeds-to-playlist! conn playlist-eid))
 
 (defn playlist-rxn [conn playlist-eid]
   (posh/pull conn '[:playlist/name {:playlist/tracks [*]}] playlist-eid))

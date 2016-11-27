@@ -4,7 +4,8 @@
             [shodan.console :as console]
             [datascript.core :as d]
             [reagent.ratom :refer [reaction]]
-            [posh.reagent :as posh]))
+            [posh.reagent :as posh]
+            [haunting-refrain.datascript.util :as u]))
 
 ;; Subscription for the big list of checkins that forms a playlist
 (defn- playlist-by-name
@@ -14,21 +15,23 @@
 (reg-sub :playlist/contents playlist-by-name)
 
 
-(defn generate-random-playlist [db [_ pl-eid]]
-  (console/log "Generating random list!")
-  (let [conn     (:ds/conn db)
+(defn generate-random-playlist [{:keys [db]} [_ pl-eid]]
+  ;(console/log "Generating random list!")
+  (let [conn (:ds/conn db)
         checkins (ds/select-random-checkins (d/db conn))]
-    (console/log "ci:" checkins)
-    (ds/save-playlist! conn pl-eid checkins))
-  db)
+    ;(console/log "ci:" checkins)
+    (ds/save-playlist! conn pl-eid checkins)
+    (ds/shuffle-input-fields! conn pl-eid)
+    {:dispatch-n (for [eid (u/get-playlist-tracks conn pl-eid)
+                       :let [track (u/pull-track-info (d/db conn) eid)]]
+                   [:spotify/search-by-track track])}))
 
-(reg-event-db :playlist/generate-random generate-random-playlist)
+(reg-event-fx :playlist/generate-random generate-random-playlist)
 
 (defn clear-playlist [db [_ pl-name]]
-  (console/log "Clearing" pl-name)
-  (let [conn (:ds/conn db)
-        pl (ds/clear-playlist! conn [:playlist/name pl-name])]
-    (console/log pl)
+  ;(console/log "Clearing" pl-name)
+  (let [conn (:ds/conn db)]
+    (u/clear-playlist! conn [:playlist/name pl-name])
     db))
 
 (reg-event-db :playlist/clear-all clear-playlist)
@@ -42,9 +45,8 @@
 
 (reg-event-db :playlist/shuffle-input shuffle-input)
 
-(defn search-by-checkin! [{:keys [db]} [_ track]]
-  (console/log "Searching" track)
-  {:dispatch [:spotify/search-by-checkin track]})
-
-(reg-event-fx :playlist/search-by-checkin search-by-checkin!)
-
+;(defn search-by-checkin! [{:keys [db]} [_ track]]
+;  (console/log "Searching" track)
+;  {:dispatch [:spotify/search-by-checkin track]})
+;
+;(reg-event-fx :playlist/search-by-checkin search-by-checkin!)
