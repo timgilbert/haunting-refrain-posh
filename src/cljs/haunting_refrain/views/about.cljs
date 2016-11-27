@@ -17,4 +17,6 @@
     [:a {:href "https://github.com/mpdairy/posh"} "posh"] "."]
    [:p "The front-end styling is via "
     [:a {:href "http://bulma.io/"} "Bulma"] ", as you can probably tell because I'm too "
-    "lazy to change the default color pallete."]])
+    "lazy to change the default color pallete."]
+   [:p "The site is hosted on "
+    [:a {:href "https://www.netflify.com/"} "Netlify"] "."]])

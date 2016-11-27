@@ -46,10 +46,14 @@ This runs the tests and then watches for chages to files after which it re-runs 
 
 ## Production Build
 
-
 To compile an advanced clojurescript build:
 
 ```
 lein clean
 lein with-profile prod cljsbuild once min
 ```
+
+## Deployment
+
+The site is auto-deployed to [netlify](https://www.netlify.com) on commits 
+to master.

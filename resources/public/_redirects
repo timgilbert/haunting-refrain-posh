@@ -1,0 +1,6 @@
+# redirects file for netlify. See here for deets:
+# https://www.netlify.com/docs/redirects/#history-pushstate-and-single-page-apps
+# Basically, we just serve index.html for any URL that isn't a file, which is
+# the same thing the custom figwheel handler does.
+
+/*    /index.html   200
