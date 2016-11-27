@@ -35,6 +35,7 @@
 
   :profiles
   {:prod {}
+   :test {}
    :dev
    {:source-paths ["src/clj" "etc/repl"]
     :dependencies [[binaryage/devtools "0.8.3"]
@@ -103,4 +104,6 @@
                   ["shell" "git" "checkout" "master"]
 
                   ;; Done
-                  ["shell" "echo" "Push to GitHub: 'git push origin develop master --tags'"]])
+                  ["shell" "echo" "Push to GitHub: 'git push origin develop master --tags'"]]
+
+  :aliases {"test" ["with-profile" "test" "doo" "phantom" "test" "once"]})
