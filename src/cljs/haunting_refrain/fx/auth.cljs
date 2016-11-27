@@ -1,35 +1,40 @@
 (ns haunting-refrain.fx.auth
   (:require [re-frame.core :refer [reg-event-fx reg-cofx reg-sub inject-cofx]]
             [shodan.console :as console]
-            [cemerick.url :as url]))
+            [cemerick.url :as url]
+            [clojure.string :as string]))
 
 (def ^:private foursquare-client-id
   "BAL2VGI3TXOWFI1TGH4O4VIHBLQ4AUC404YYSRRT5OJJEGGL")
 
-(def ^:private foursquare-callback-url "http://localhost:3449/foursquare-hello")
-
 (def ^:private spotify-client-id
   "81a750b7679d4abfbd5a10b5ec5c426b")
 
-(def ^:private spotify-callback-url "http://localhost:3449/spotify-hello")
-
 (def ^:private auth-services
+  "These maps set up some URLs and other things for external sites that support
+  OAuth 2.0-ish access to their APIs. Note that in the URLs below, the string XXX
+  will be replaced by the origin of the current URL the browser is on (scheme, host
+  and port)."
   {:foursquare
    {:auth/token "access_token"
     :auth/url   (str "https://foursquare.com/oauth2/authenticate"
                      "?client_id=" foursquare-client-id
                      "&response_type=token"
-                     "&redirect_uri=" foursquare-callback-url)}
+                     "&redirect_uri="
+                     "XXX/foursquare-hello")}
    :spotify
    {:auth/token "access_token"
     :auth/url   (str "https://accounts.spotify.com/authorize"
                      "?client_id=" spotify-client-id
                      "&response_type=token"
                      "&scopes=playlist-modify-public%2playlist-modify-private"
-                     "&redirect_uri=" spotify-callback-url)}})
+                     "&redirect_uri="
+                     "XXX/spotify-hello")}})
 
 (defn url-fragment-coeffect
-  "The coeffect will examine the current page's URL and treat the "
+  "The coeffect will examine the current page's URL and treat the fragment (part
+  after the # sign) as a URL query string, decode it to a map, and assoc it with
+  the :url-fragment coeffect."
   [coeffects _]
   (let [frag-map (-> (.. js/window -location -href)
                      (url/url)
@@ -46,9 +51,11 @@
 
 (reg-event-fx
   :auth/login
-  (fn [_ [_ service]]
-    (if-let [url (get-in auth-services [service :auth/url])]
-      {:navigate [url :redirect]}
+  [(inject-cofx :origin)]
+  (fn [{:keys [origin]} [_ service]]
+    (if-let [base-url (get-in auth-services [service :auth/url])]
+      (let [full-url (string/replace base-url #"XXX" origin)]
+        {:navigate [full-url :redirect]})
       (console/error "Can't find an authorization url for" service))))
 
 (reg-event-fx

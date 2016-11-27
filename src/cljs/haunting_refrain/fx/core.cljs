@@ -1,6 +1,7 @@
 (ns haunting-refrain.fx.core
   (:require haunting-refrain.fx.auth
             haunting-refrain.fx.datascript
+            haunting-refrain.fx.domain
             haunting-refrain.fx.foursquare
             haunting-refrain.fx.http
             haunting-refrain.fx.local-storage
@@ -14,7 +15,7 @@
 (def default-db
   {:route/current-page :main/index})
 
-(defn- initialize
+(defn- initialize-db
   "Main re-frame initialization. Retrieves persisted storage from the localStorage key
   :hr-persistance to set up the default database."
   [{:keys [local-storage]} [_]]
@@ -25,4 +26,4 @@
 (reg-event-fx
   :initialize-db
   [(inject-cofx :local-storage :hr-persistance)]
-  initialize)
+  initialize-db)

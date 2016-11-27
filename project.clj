@@ -34,18 +34,17 @@
                  :port 4444}
 
   :profiles
-  {:dev
+  {:prod {}
+   :dev
    {:source-paths ["src/clj" "etc/repl"]
     :dependencies [[binaryage/devtools "0.8.3"]
                    [ring "1.5.0"]
+                   [lein-shell "0.5.0"]
                    [figwheel-sidecar "0.5.8"]
                    [com.cemerick/piggieback "0.2.1"]]
-
     :plugins      [[lein-figwheel "0.5.8" :exclusions [org.clojure/clojure]]
                    [lein-doo "0.1.7"]
-                   [lein-ancient "0.6.10"]]}
-   :prod
-   {:plugins      []}}
+                   [lein-ancient "0.6.10"]]}}
 
   :cljsbuild
   {:builds
@@ -75,7 +74,33 @@
      :compiler     {:main          haunting-refrain.runner
                     :output-to     "resources/public/js/compiled/test.js"
                     :output-dir    "resources/public/js/compiled/test/out"
-                    :optimizations :none}}
-    ]}
+                    :optimizations :none}}]}
 
-  )
+  :release-tasks [;; Make sure we're up to date
+                  ["vcs" "assert-committed"]
+                  ["shell" "git" "checkout" "develop"]
+                  ["shell" "git" "pull"]
+                  ["shell" "git" "checkout" "master"]
+                  ["shell" "git" "pull"]
+
+                  ;; Merge develop into master
+                  ["shell" "git" "merge" "develop"]
+
+                  ;; Bump version, commit and tag
+                  ["change" "version" "leiningen.release/bump-version" "release"]
+                  ["vcs" "commit"]
+                  ["shell" "git" "tag" "-f" "release-${:version}"]
+
+                  ;; Merge master back into develop
+                  ["shell" "git" "checkout" "develop"]
+                  ["shell" "git" "merge" "master"]
+
+                  ;; Bump to SNAPSHOT version and commit
+                  ["change" "version" "leiningen.release/bump-version" "minor"]
+                  ["vcs" "commit"]
+
+                  ;; Checkout to master, build native dependencies and deploy
+                  ["shell" "git" "checkout" "master"]
+
+                  ;; Done
+                  ["shell" "echo" "Push to GitHub: 'git push origin develop master --tags'"]])
