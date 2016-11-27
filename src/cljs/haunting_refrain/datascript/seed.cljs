@@ -19,7 +19,6 @@
                        :in $ ?datum
                        :where [?d :seed/datum ?datum]]
                      db datum)]
-    ;(console/log "f" field "d" datum)
     (if extant
       ;; If a field already exists, just update the track to use it
       {:db/id       extant
@@ -38,19 +37,4 @@
   (let [db    (d/db conn)
         tr    (u/get-playlist-tracks conn playlist-eid)
         seeds (map (partial generate-seed db) tr)]
-    ;(console/log "seeds" (doall seeds))
-    (d/transact! conn seeds)
-    )
-  )
-
-(defn select-input-fields!
-  "For each track in the playlist, select a random field to be used as search data"
-  [conn track-eids]
-  (let [db     (d/db conn)
-        fields (for [track (d/pull-many db '[:db/id {:track/checkin [*]}] track-eids)
-                     :let [field (input/random-field (:track/checkin track))]]
-                 {:db/id                (:db/id track)
-                  :track/selected-field field})]
-    ;(console/log "f" (doall fields))
-    (d/transact! conn fields)))
-
+    (d/transact! conn seeds)))

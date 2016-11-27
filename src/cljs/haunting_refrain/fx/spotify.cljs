@@ -12,10 +12,6 @@
         full (assoc base :query {:q search :type (or search-type "track")})]
     (str full)))
 
-(defn- query-from-checkin
-  [track]
-  (get-in track [:track/checkin (:track/selected-field track)]))
-
 (defn search-by-track
   "Persist an object into localStorage at the given key."
   [_ [_ track]]

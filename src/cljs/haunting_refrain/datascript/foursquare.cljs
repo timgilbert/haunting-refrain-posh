@@ -32,8 +32,3 @@
         tx-data (map checkin->db-entry items)
         result  (d/transact! conn tx-data)]
     (console/log "Parsed" (count items) "of" total "check-ins")))
-
-(defn select-random-field
-  [db checkin-eid]
-  (let [entity (d/touch (d/entity db checkin-eid))]
-    (input/random-field entity)))

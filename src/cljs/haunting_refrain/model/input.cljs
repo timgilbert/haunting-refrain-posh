@@ -26,7 +26,97 @@
    :foursquare/cross
    {:probability 2}})
 
-(defn sanitize-datum [field datum]
+(def state-abbreviations
+  "Whee!"
+  {"AL" "Alabama"
+   "AK" "Alaska"
+   "AS" "American Samoa"
+   "AZ" "Arizona"
+   "AR" "Arkansas"
+   "CA" "California"
+   "CO" "Colorado"
+   "CT" "Connecticut"
+   "DE" "Delaware"
+   "DC" "District Of Columbia"
+   "FM" "Federated States Of Micronesia"
+   "FL" "Florida"
+   "GA" "Georgia"
+   "GU" "Guam"
+   "HI" "Hawaii"
+   "ID" "Idaho"
+   "IL" "Illinois"
+   "IN" "Indiana"
+   "IA" "Iowa"
+   "KS" "Kansas"
+   "KY" "Kentucky"
+   "LA" "Louisiana"
+   "ME" "Maine"
+   "MH" "Marshall Islands"
+   "MD" "Maryland"
+   "MA" "Massachusetts"
+   "MI" "Michigan"
+   "MN" "Minnesota"
+   "MS" "Mississippi"
+   "MO" "Missouri"
+   "MT" "Montana"
+   "NE" "Nebraska"
+   "NV" "Nevada"
+   "NH" "New Hampshire"
+   "NJ" "New Jersey"
+   "NM" "New Mexico"
+   "NY" "New York"
+   "NC" "North Carolina"
+   "ND" "North Dakota"
+   "MP" "Northern Mariana Islands"
+   "OH" "Ohio"
+   "OK" "Oklahoma"
+   "OR" "Oregon"
+   "PW" "Palau"
+   "PA" "Pennsylvania"
+   "PR" "Puerto Rico"
+   "RI" "Rhode Island"
+   "SC" "South Carolina"
+   "SD" "South Dakota"
+   "TN" "Tennessee"
+   "TX" "Texas"
+   "UT" "Utah"
+   "VT" "Vermont"
+   "VI" "Virgin Islands"
+   "VA" "Virginia"
+   "WA" "Washington"
+   "WV" "West Virginia"
+   "WI" "Wisconsin"
+   "WY" "Wyoming"
+   ;; I would feel bad if I left these out, and they'd be too polite to mention it
+   "AB" "Alberta"
+   "BC" "British Columbia"
+   "MB" "Manitoba"
+   "NB" "New Brunswick"
+   "NL" "Newfoundland and Labrador"
+   "NS" "Nova Scotia"
+   "NU" "Nunavut"
+   "NT" "Northwest Territories"
+   "ON" "Ontario"
+   "PE" "Prince Edward Island"
+   "QC" "Quebec"
+   "SK" "Saskatchewan"
+   "YT" "Yukon"})
+
+(defn- dispatch-field [field _]
+  (case field :foursquare/address :address
+              :foursquare/state   :state
+              :default))
+(defmulti sanitize-datum dispatch-field)
+
+(defmethod sanitize-datum :address [_ datum]
+  ;; Remove initial numeric bit of address to get street name
+  (string/replace-first datum #"^[0-9]+[0-9a-zA-Z]+\s+" ""))
+
+(defmethod sanitize-datum :state [_ datum]
+  ;; Remove initial numeric bit of address to get street name
+  (get state-abbreviations datum datum))
+
+(defmethod sanitize-datum :default [_ datum]
   datum)
 
 (defn random-field
@@ -37,9 +127,6 @@
         repeats (for [field domain
                       :let [p (get-in input-weights [field :probability])]]
                   (repeat p field))
-        ;_ (console/log "data" (-> input-data keys set))
-        ;_ (console/log "weights" (-> input-weights keys set))
-        ;_ (console/log "domain" domain "r" repeats)
         choice  (->> repeats
                      (into [])
                      doall

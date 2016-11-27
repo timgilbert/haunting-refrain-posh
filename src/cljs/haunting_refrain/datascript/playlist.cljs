@@ -22,7 +22,6 @@
                      (take size)
                      (sort #(> (first %1) (first %2))) ; sort by date
                      (map second))] ; extract eid
-     ;(console/log sorted)
      sorted)))
 
 (defn create-empty-playlist!
@@ -32,7 +31,6 @@
         tx-data [{:db/id           pl-id
                   :playlist/name   name}]
          tx (d/transact! conn tx-data)]
-    ;(console/log "tx" (pr-str tx))
     (-> tx :tempids (get pl-id))))
 
 (defn save-playlist!
@@ -51,28 +49,10 @@
   "Remove a playlist and its tracks"
   [conn playlist-eid]
   (console/log "Removing playlist" playlist-eid)
-  ;; This throws an error
   (d/transact! conn [[:db.fn/retractEntity playlist-eid]]))
-
-#_(defn select-random-field
-  [db checkin-eid]
-  (let [entity (d/touch (d/entity db checkin-eid))]
-    (input/random-field entity)))
-
-#_(defn select-input-fields!
-  "For each track in the playlist, select a random field to be used as search data"
-  [conn track-eids]
-  (let [db     (d/db conn)
-        fields (for [track (d/pull-many db '[:db/id {:track/checkin [*]}] track-eids)
-                     :let [field (input/random-field (:track/checkin track))]]
-                 {:db/id                (:db/id track)
-                  :track/selected-field field})]
-    ;(console/log "f" (doall fields))
-    (d/transact! conn fields)))
 
 (defn shuffle-input-fields!
   [conn playlist-eid]
-  ;(select-input-fields! conn (u/get-playlist-tracks conn playlist-eid))
   (seed/attach-seeds-to-playlist! conn playlist-eid))
 
 (defn playlist-rxn [conn playlist-eid]
