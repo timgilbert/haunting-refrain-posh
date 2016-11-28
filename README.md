@@ -41,10 +41,11 @@ After it connects you'll get your `user=>` prompt back, and you should be able t
 ### Run tests:
 
 ```
-lein doo phantom test
+lein with-profile test doo phantom test
 ```
 
 This runs the tests and then watches for chages to files after which it re-runs them.
+Append `once` to the end to run the tests a single time.
 
 ## Production Build
 
