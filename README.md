@@ -59,4 +59,5 @@ lein with-profile prod cljsbuild once min
 ## Deployment
 
 The site is auto-deployed to [netlify](https://www.netlify.com) on commits 
-to master.
+to master. Run `lein release` to merge develop to master, then push to trigger
+a build.

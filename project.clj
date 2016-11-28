@@ -77,6 +77,7 @@
                     :output-dir    "resources/public/js/compiled/test/out"
                     :optimizations :none}}]}
 
+  ;; Git flow oriented release task.
   :release-tasks [;; Make sure we're up to date
                   ["vcs" "assert-committed"]
                   ["shell" "git" "checkout" "develop"]
