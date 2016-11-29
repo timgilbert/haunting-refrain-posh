@@ -1,10 +1,9 @@
 (ns haunting-refrain.fx.playlist
-  (:require [re-frame.core :refer [reg-event-fx reg-event-db reg-sub inject-cofx]]
+  (:require [re-frame.core :refer [reg-event-fx reg-event-db reg-sub inject-cofx subscribe]]
             [haunting-refrain.datascript.playlist :as ds]
             [shodan.console :as console]
             [datascript.core :as d]
             [reagent.ratom :refer [reaction]]
-            [posh.reagent :as posh]
             [haunting-refrain.datascript.util :as u]))
 
 ;; TODO: figure out subs here
@@ -13,7 +12,18 @@
   [db [_ pl-name]]
   (ds/playlist-rxn (:ds/conn db) [:playlist/name pl-name]))
 
-(reg-sub :playlist/contents playlist-by-name)
+(defn- playlist-contents-input-signals
+  [[_ playlist-name] _]
+  (subscribe [:posh/pull
+              [:playlist/name {:playlist/tracks [:*]}]
+              [:playlist/name playlist-name]]))
+(reg-sub
+  :playlist/contents
+  ;; Input signals
+  playlist-contents-input-signals
+  ;; Value
+  (fn [posh-rxn query-v _]
+    @posh-rxn))
 
 
 (defn generate-random-playlist

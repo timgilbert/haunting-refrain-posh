@@ -43,6 +43,7 @@
   (fn [{:keys [db :ds/conn]} [_ body]]
     (let [playlist (:ds/playlist db)]
       (console/log "Got " (-> body :response :checkins :items count) "checkins from foursquare")
+      (console/log "conn" conn)
       (u/clear-playlist! conn playlist)
       (ds/parse-checkins! conn body)
       {:dispatch [:playlist/generate-random playlist]})))

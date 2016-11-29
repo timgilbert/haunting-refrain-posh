@@ -1,7 +1,6 @@
 (ns haunting-refrain.fx.datascript
   (:require [re-frame.core :refer [reg-event-fx reg-fx reg-cofx reg-sub inject-cofx dispatch]]
             [shodan.console :as console]
-            [posh.core :as posh]
             [datascript.core :as d]
             [haunting-refrain.datascript.core :as hrd]))
 
@@ -15,7 +14,7 @@
   "Gets a datascript database value from the active connection and saves it in the :ds/db coeffect."
   [coeffects key]
   (assoc coeffects :ds/conn (d/db (hrd/get-connection))))
-(reg-cofx :ds/conn datascript-db-coeffect)
+(reg-cofx :ds/db datascript-db-coeffect)
 
 (defn- datascript-transact!-effect
   "Effect which takes a bunch of transaction data to transact and optional on-success and on-failure

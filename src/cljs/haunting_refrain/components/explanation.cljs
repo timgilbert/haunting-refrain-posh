@@ -73,10 +73,16 @@
    "you checked in on Foursquare to " [:span.venue venue] " "
    "and commented: \"" [:strong datum] "\"."])
 
+(defmethod explanation :default
+  [{:keys [venue date datum]}]
+  [:div.message-body
+   "Yikes, unknown dispatch value, v: " venue " d: " date " datum: " datum])
+
 (defn reason [track]
   (let [seed    (:track/seed track)
         checkin (:track/checkin track)]
     [:div.message
+     "seed" (:seed/field seed)
      (explanation {:selected (:seed/field seed)
                    :date     (u/format-time (:foursquare/date checkin))
                    :venue    (:foursquare/name checkin)

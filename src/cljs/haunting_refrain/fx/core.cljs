@@ -7,6 +7,7 @@
             haunting-refrain.fx.local-storage
             haunting-refrain.fx.navigation
             haunting-refrain.fx.playlist
+            haunting-refrain.fx.posh
             haunting-refrain.fx.spotify
             [haunting-refrain.datascript.core :as datascript]
             [re-frame.core :refer [reg-event-fx inject-cofx]]

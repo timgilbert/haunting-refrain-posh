@@ -57,19 +57,18 @@
         ^{:key (:db/id t)}
         [single-track t])]]))
 
-(defn existing-playlist [rxn]
+(defn existing-playlist [data]
   ;; No idea why I need to deref twice here
-  (let [hmm rxn]
-    (fn [rxn]
-      (let [data @rxn]
-        [:section.section
-         [:h1.title "Playlist " (:playlist/name data)]
-         [track-list (:playlist/tracks data)]]))))
+  [:section.section
+   [:h1.title "Playlist " (:playlist/name data)]
+   [track-list (:playlist/tracks data)]])
 
 (defn playlist-display [name]
   (let [sub (rf/subscribe [:playlist/contents name])]
+    (console/log "sub" sub)
     (fn [name]
       (let [data @sub]
+        (console/log "data" data)
         (if (nil? data)
           [:h2 "Nil data"]
           [existing-playlist data])))))

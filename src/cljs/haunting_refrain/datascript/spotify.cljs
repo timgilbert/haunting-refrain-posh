@@ -5,6 +5,11 @@
             [posh.reagent :as posh]
             [haunting-refrain.model.input :as input]))
 
+(defn- get-thumb
+  "Select a thumbnail image"
+  [spotify-track]
+  (get-in spotify-track [:album :images 1 :url]))
+
 ;; https://developer.spotify.com/web-api/object-model/#track-object
 (defn spotify-track->db-entry
   [seed spotify-track]
@@ -14,9 +19,10 @@
              :spotify/artist-name (get-in spotify-track [:artists 0 :name])
              :spotify/artist-id   (get-in spotify-track [:artists 0 :id])
              :spotify/album-name  (get-in spotify-track [:album :name])
-             :spotify/album-id    (get-in spotify-track [:album :id])
-             :spotify/album-thumb (get-in spotify-track [:album :images 1 :url])}]
-    raw))
+             :spotify/album-id    (get-in spotify-track [:album :id])}]
+    (merge raw
+           (when-let [thumb (get-thumb spotify-track)]
+             {:spotify/album-thumb thumb}))))
 
 (defn parse-songs!
   [conn seed body]
