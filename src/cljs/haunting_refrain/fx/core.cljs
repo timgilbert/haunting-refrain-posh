@@ -18,12 +18,12 @@
 (defn- initialize-db
   "Main re-frame initialization. Retrieves persisted storage from the localStorage key
   :hr-persistance to set up the default database."
-  [{:keys [local-storage]} [_]]
-  (let [ds-map (datascript/initialize-connection!)]
+  [{:keys [hr/local-storage]} [_]]
+  (let [ds-map (datascript/initialize!)]
     {:db (-> default-db
              (merge local-storage ds-map))}))
 
 (reg-event-fx
   :initialize-db
-  [(inject-cofx :local-storage :hr-persistance)]
+  [(inject-cofx :hr/local-storage :hr-persistance)]
   initialize-db)

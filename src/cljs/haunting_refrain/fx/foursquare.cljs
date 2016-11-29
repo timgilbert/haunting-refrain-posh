@@ -17,7 +17,7 @@
 
 (defn get-checkins
   "Persist an object into localStorage at the given key."
-  [{:keys [db origin]} [_]]
+  [{:keys [db hr/origin]} [_]]
   (let [token (get-in db [:auth/access-token :foursquare])]
     {:dispatch [:http/request
                 {:method     :get
@@ -28,7 +28,7 @@
 
 (reg-event-fx
   :foursquare/get-checkins
-  [(inject-cofx :origin)]
+  [(inject-cofx :hr/origin)]
   get-checkins)
 
 (reg-event-db
@@ -39,8 +39,9 @@
 
 (reg-event-fx
   :foursquare/get-checkins-success
-  (fn [{:keys [db]} [_ body]]
-    (let [{:keys [:ds/conn :ds/playlist]} db]
+  [(inject-cofx :ds/conn)]
+  (fn [{:keys [db :ds/conn]} [_ body]]
+    (let [playlist (:ds/playlist db)]
       (console/log "Got " (-> body :response :checkins :items count) "checkins from foursquare")
       (u/clear-playlist! conn playlist)
       (ds/parse-checkins! conn body)

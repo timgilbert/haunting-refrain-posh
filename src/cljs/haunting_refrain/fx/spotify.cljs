@@ -1,5 +1,5 @@
 (ns haunting-refrain.fx.spotify
-  (:require [re-frame.core :refer [reg-event-fx reg-event-db]]
+  (:require [re-frame.core :refer [reg-event-fx reg-event-db inject-cofx]]
             [haunting-refrain.datascript.spotify :as sp]
             [cemerick.url :as url]
             [shodan.console :as console]))
@@ -30,11 +30,15 @@
     (console/warn "Oh noes! Spotify search for" (:seed/datum seed) " returned " status ", body:" body)
     db))
 
+(defn- spotify-search-success
+  [{:keys [db :ds/conn]} [_ track body]]
+  (console/log "Search for" (-> track :track/seed :seed/datum) "found"
+               (get-in body [:tracks :total]) "tracks!")
+  (sp/parse-songs! conn (:track/seed track) body)
+  (sp/select-random-song! conn track)
+  {:db db})
+
 (reg-event-fx
   :spotify/search-success
-  (fn [{:keys [db]} [_ track body]]
-    (console/log "Search for" (-> track :track/seed :seed/datum) "found"
-                 (get-in body [:tracks :total]) "tracks!")
-    (sp/parse-songs! (:ds/conn db) (:track/seed track) body)
-    (sp/select-random-song! (:ds/conn db) track)
-    {:db db}))
+  [(inject-cofx :ds/conn)]
+  spotify-search-success)

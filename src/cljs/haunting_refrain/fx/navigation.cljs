@@ -17,19 +17,19 @@
                  pushy/set-token!)]
     (nav-fn @router/pushy-instance place)))
 
-(reg-fx :navigate navigate)
+(reg-fx :hr/navigate navigate)
 
 (reg-event-fx
   :navigate/push
   (fn [_ [_ place & [params]]]
     (console/log "place" place "params" params)
-    {:navigate [(router/href place params) :push]}))
+    {:hr/navigate [(router/href place params) :push]}))
 
 (reg-event-fx
   :navigate/replace
   (fn [_ [_ place & [params]]]
     (console/log "place" place "params" params)
-    {:navigate [(router/href place params) :replace]}))
+    {:hr/navigate [(router/href place params) :replace]}))
 
 (defn- route-changed-handler
   "Handler called by pushy when the URL changes. route-name is the keyword name of the route;

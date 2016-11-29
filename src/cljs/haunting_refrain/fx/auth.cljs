@@ -40,9 +40,9 @@
                      (url/url)
                      :anchor
                      (url/query->map))]
-    (assoc coeffects :url-fragment frag-map)))
+    (assoc coeffects :hr/url-fragment frag-map)))
 
-(reg-cofx :url-fragment url-fragment-coeffect)
+(reg-cofx :hr/url-fragment url-fragment-coeffect)
 
 (reg-sub
   :auth/logged-in?
@@ -51,28 +51,28 @@
 
 (reg-event-fx
   :auth/login
-  [(inject-cofx :origin)]
-  (fn [{:keys [origin]} [_ service]]
+  [(inject-cofx :hr/origin)]
+  (fn [{:keys [hr/origin]} [_ service]]
     (if-let [base-url (get-in auth-services [service :auth/url])]
       (let [full-url (string/replace base-url #"XXX" origin)]
-        {:navigate [full-url :redirect]})
+        {:hr/navigate [full-url :redirect]})
       (console/error "Can't find an authorization url for" service))))
 
 (reg-event-fx
   :auth/logout
   (fn [{:keys [db]} [_ service]]
     (let [new-db (update-in db [:auth/access-token] dissoc service)]
-      {:db       new-db
-       :persist! [:hr-persistance (select-keys new-db [:auth/access-token])]})))
+      {:db          new-db
+       :hr/persist! [:hr-persistance (select-keys new-db [:auth/access-token])]})))
 
 (reg-event-fx
   :auth/parse-token
-  [(inject-cofx :url-fragment)]
+  [(inject-cofx :hr/url-fragment)]
   (fn [cofx [_ service]]
     (let [token-name (get-in auth-services [service :auth/token])
-          token      (get-in cofx [:url-fragment token-name])
+          token      (get-in cofx [:hr/url-fragment token-name])
           new-db     (assoc-in (:db cofx) [:auth/access-token service] token)]
       (console/log "t" token "tn" token-name)
-      {:db       new-db
-       :persist! [:hr-persistance (select-keys new-db [:auth/access-token])]
-       :dispatch [:navigate/replace :main/index]})))
+      {:db          new-db
+       :hr/persist! [:hr-persistance (select-keys new-db [:auth/access-token])]
+       :dispatch    [:navigate/replace :main/index]})))

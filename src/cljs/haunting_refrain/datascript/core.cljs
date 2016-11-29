@@ -24,18 +24,24 @@
 (defn create-db! []
   (let [conn (d/create-conn hr-schema)]
     (console/log "Created datascript connection" conn)
+    (posh/posh! conn)
     conn))
 
-(defn reset-db! [conn]
-  (d/reset-conn! conn (d/empty-db hr-schema)))
+(mount/defstate global-datascript-conn :start (create-db!))
 
-(mount/defstate datascript-conn :start (create-db!))
-
-(defn initialize-connection!
-  "Create a new datascript connection, set up some intial data in the database, and return a
-  map including the connection which will be merged into the initial app-db."
+(defn get-connection
+  "Return the datascript connection, throwing an error if it's nil"
   []
-  (let [playlist-eid (playlist/create-empty-playlist! @datascript-conn config/default-playlist-name)]
-    (posh/posh! @datascript-conn)
-    {:ds/conn     @datascript-conn
-     :ds/playlist playlist-eid}))
+  (if-let [conn @global-datascript-conn]
+    conn
+    (throw (ex-info "Oops! datascript-conn is not truthy! Did you run (mount/start)?" global-datascript-conn))))
+
+(defn reset-db! [& [connection-to-reset]]
+  (d/reset-conn! (or connection-to-reset (get-connection)) (d/empty-db hr-schema)))
+
+(defn initialize!
+  "Set up all the seed data we need for the app, returning a map of eids for relevant entities."
+  [& [conn-to-initialize]]
+  (let [conn (or conn-to-initialize @global-datascript-conn)
+        playlist-eid (playlist/create-empty-playlist! conn config/default-playlist-name)]
+    {:ds/playlist playlist-eid}))

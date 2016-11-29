@@ -31,7 +31,7 @@
 
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]
                  :host "0.0.0.0"
-                 :port 4444}
+                 :port 3333}
 
   :profiles
   {:prod {}

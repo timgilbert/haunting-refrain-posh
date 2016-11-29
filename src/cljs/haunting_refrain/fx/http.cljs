@@ -17,7 +17,7 @@
           (dispatch [:http/success options (:body response)])
           (dispatch [:http/failure options (:body response) (:status response)])))))
 
-(reg-fx :http http-effect)
+(reg-fx :hr/http http-effect)
 
 (defn- http-request
   "Send an HTTP request and dispatch events based on the response. Options is a map consisting of:
@@ -31,8 +31,8 @@
   While the HTTP request has been sent but no response has need received, the subscription
   (subscribe [:http/loading? endpoint-name]) will resolve to true."
   [{:keys [db]} [_ {:keys [endpoint] :as options}]]
-  {:db   (assoc-in db [:http/loading? endpoint] true)
-   :http options})
+  {:db      (assoc-in db [:http/loading? endpoint] true)
+   :hr/http options})
 
 (reg-event-fx :http/request http-request)
 
